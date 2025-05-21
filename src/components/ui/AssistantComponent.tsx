@@ -36,7 +36,6 @@ const AssistantComponent = () => {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.chatContainer}>
-                        {/* Header */}
                         <View style={styles.header}>
                             <Text style={styles.headerText}>Help Assistant</Text>
                             <TouchableOpacity onPress={() => setIsModalVisible(false)}>

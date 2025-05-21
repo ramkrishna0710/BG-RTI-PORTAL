@@ -12,6 +12,7 @@ interface CustomDashboardUploadProps {
     iconColor?: string;
     title: string;
     subtitle: string;
+    viewAlltitle?: string;
     align?: 'start' | 'center';
     onViewAllPress?: () => void;
     arrowIconColor?: string;
@@ -23,6 +24,7 @@ const CustomDashboardUpload: React.FC<CustomDashboardUploadProps> = ({
     iconColor = Colors.textBlue,
     title,
     subtitle,
+    viewAlltitle,
     align = 'center',
     onViewAllPress,
     arrowIconColor = Colors.textBlue,
@@ -65,7 +67,7 @@ const CustomDashboardUpload: React.FC<CustomDashboardUploadProps> = ({
                     color={arrowIconColor}
                     fontSize={RV(12)}
                 >
-                    View All Application
+                    {viewAlltitle}
                 </CustomText>
                 <Icon
                     name="arrow-forward"

@@ -70,7 +70,8 @@ const FileRTIScreen = ({ route }: { route: FileRTIScreenRouteProp }) => {
 
     return (
         <CustomSafeAreaView style={{ zIndex: 0 }}>
-            <AssistantComponent/>
+            <HeaderComponent />
+            <AssistantComponent />
             <ScrollView
                 ref={scrollViewRef}
                 keyboardShouldPersistTaps="handled"
@@ -78,7 +79,6 @@ const FileRTIScreen = ({ route }: { route: FileRTIScreenRouteProp }) => {
                 nestedScrollEnabled={true}
                 showsVerticalScrollIndicator={false}
             >
-                <HeaderComponent />
 
                 {isLogin ? (
 
@@ -91,10 +91,10 @@ const FileRTIScreen = ({ route }: { route: FileRTIScreenRouteProp }) => {
                             borderColor: Colors.lightText,
                             borderWidth: 0.2,
                             borderRadius: 10,
-                            elevation: 4,
-                            shadowColor: '#000',
+                            elevation: 1,
+                            shadowColor: Colors.lightText,
                             shadowOpacity: 0.05,
-                            shadowOffset: { width: 2, height: 2 },
+                            shadowOffset: { width: 1, height: 1 },
                             shadowRadius: 4,
                         }}>
                             <View style={{

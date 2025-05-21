@@ -45,6 +45,8 @@ const DashboardScreen = () => {
             iconName='copy-outline'
             subtitle='View and track all yor submitted RTI applications.'
             align='start'
+            onViewAllPress={()=> navigate('ApplicationScreen')}
+            viewAlltitle='View All Applications'
           />
           <CustomDashboardUpload
             title='My Applications'
@@ -54,6 +56,8 @@ const DashboardScreen = () => {
             align='start'
             iconColor={'orange'}
             arrowIconColor='orange'
+            onViewAllPress={()=>'FileRTIScreen'}
+            viewAlltitle='File New RTI'
           />
           <CustomDashboardUpload
             title='Track Status'
@@ -63,6 +67,7 @@ const DashboardScreen = () => {
             align='start'
             iconColor={Colors.text}
             arrowIconColor={Colors.text}
+            viewAlltitle='Track Application'
           />
 
           <View style={styles.recentMainContainer}>

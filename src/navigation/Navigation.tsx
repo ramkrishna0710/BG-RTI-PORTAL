@@ -8,6 +8,9 @@ import FileRTIScreen from '../screens/FileRTIScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ViewAllScreen from '../screens/ViewAllScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import ApplicationScreen from '../screens/ApplicationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +28,9 @@ const Navigation = () => {
                 <Stack.Screen name="DashboardScreen" component={DashboardScreen} />
                 <Stack.Screen name="ViewAllScreen" component={ViewAllScreen} />
                 <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+                <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+                <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+                <Stack.Screen name="ApplicationScreen" component={ApplicationScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

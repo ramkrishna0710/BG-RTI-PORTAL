@@ -13,15 +13,16 @@ import FooterComponent from '@components/ui/dashboard/FooterComponent'
 import HeaderComponent from '@components/ui/dashboard/HeaderComponent'
 import { navigate } from '@utils/NavigationUtils'
 import AssistantComponent from '@components/ui/AssistantComponent'
+import CustomStatusBar from '@components/statusbar/CustomStatubar'
 
 const HomeScreen = () => {
   const { t } = useTranslation();
 
   return (
     <CustomSafeAreaView>
-
+      <CustomStatusBar />
       <HeaderComponent />
-      <AssistantComponent/>
+      <AssistantComponent />
 
       <ScrollView>
         <View style={styles.rtiContainer}>
@@ -44,7 +45,7 @@ const HomeScreen = () => {
           <CustomButton
             label='File RTI Application'
             width="60%"
-            onPress={() => navigate('LoginScreen')}
+            onPress={() => navigate('FileRTIScreen')}
           />
 
           <CustomButton
@@ -53,7 +54,7 @@ const HomeScreen = () => {
             label='Track Application'
             textColor={Colors.tertiary}
             width="60%"
-            onPress={() => navigate('LoginScreen')}
+            onPress={() => navigate('DashboardScreen')}
           />
         </View>
 
@@ -152,6 +153,7 @@ const HomeScreen = () => {
         <FooterComponent />
       </ScrollView>
     </CustomSafeAreaView>
+
   )
 }
 
