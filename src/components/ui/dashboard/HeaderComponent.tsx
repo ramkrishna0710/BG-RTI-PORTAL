@@ -45,7 +45,7 @@ const HeaderComponent = () => {
                 <LanguageModal
                     visible={visible}
                     onClose={() => setVisible(false)}
-                    selectedLanguage={lang === 'en' ? 'English' : 'Hindi'}
+                    selectedLanguage={lang === 'hi' ? 'Hindi' : 'English'}
                     onSelectLanguage={(languageLabel) => {
                         const langCode = languageLabel === 'English' ? 'en' : 'hi'
                         selectLanguage(langCode)
