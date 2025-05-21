@@ -11,7 +11,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import { navigate } from '@utils/NavigationUtils'
 
 const HeaderComponent = () => {
-    
+
     const [visible, setVisible] = useState(false)
     const [isMenu, setIsMenu] = useState(false)
     const [lang, setLang] = useState(i18n.language || 'en')
@@ -93,7 +93,7 @@ const HeaderComponent = () => {
                         <Pressable
                             onPress={() => {
                                 setIsMenu(false)
-                                navigate('HomeScreen')
+                                navigate('DashboardScreen')
                             }}
                         >
                             <CustomText
@@ -175,6 +175,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 12,
         paddingVertical: 12,
+        backgroundColor: Colors.background,
+        shadowColor: Colors.lightText,
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 6,
     },
     headerMenuContainer: {
         flexDirection: 'row',

@@ -1,19 +1,18 @@
 import { View, Text, StyleSheet, Pressable, ScrollView, Image } from 'react-native'
 import React, { useState } from 'react'
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView'
-import Icon from '@components/global/Icon'
 import { RFValue } from 'react-native-responsive-fontsize'
 import CustomText from '@components/global/CustomText'
 import { Colors, screenWidth } from '@unistyles/Contstants'
 import { useTranslation } from 'react-i18next'
 import { RV } from '@unistyles/unistyles'
-import i18n from '../locales/i18n'
 import CustomButton from '@components/ui/CustomButton'
 import CustomUpload from '@components/ui/CustomUpload'
 import StatCard from '@components/ui/dashboard/StatCard'
-import LanguageModal from '@components/modals/LanguageModal'
 import FooterComponent from '@components/ui/dashboard/FooterComponent'
 import HeaderComponent from '@components/ui/dashboard/HeaderComponent'
+import { navigate } from '@utils/NavigationUtils'
+import AssistantComponent from '@components/ui/AssistantComponent'
 
 const HomeScreen = () => {
   const { t } = useTranslation();
@@ -22,6 +21,7 @@ const HomeScreen = () => {
     <CustomSafeAreaView>
 
       <HeaderComponent />
+      <AssistantComponent/>
 
       <ScrollView>
         <View style={styles.rtiContainer}>
@@ -44,15 +44,16 @@ const HomeScreen = () => {
           <CustomButton
             label='File RTI Application'
             width="60%"
-            onPress={() => { }}
+            onPress={() => navigate('LoginScreen')}
           />
+
           <CustomButton
             bgColor={Colors.transparent}
             borderColor={Colors.lightText}
             label='Track Application'
             textColor={Colors.tertiary}
             width="60%"
-            onPress={() => { }}
+            onPress={() => navigate('LoginScreen')}
           />
         </View>
 

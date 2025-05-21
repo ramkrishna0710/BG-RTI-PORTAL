@@ -7,11 +7,11 @@ export const screenWidth = Dimensions.get('screen').width
 
 export const Colors = {
     text: '#222',
-    active_light:'#ECFAF1',
+    active_light: '#ECFAF1',
     secondary: '#2D2D2D',
     tertiary: '#F4F4F2',
     background: '#fff',
-    background_light:'#F4F6FC',
+    background_light: '#F4F6FC',
     border: '#E5E9EF',
     lightText: '#9197A6',
     active: '#019A51',
@@ -21,7 +21,8 @@ export const Colors = {
     background3: '#1e293b',
     textBlue: '#0047ac',
     textBlueDark: '#111825',
-    transparent: 'transparent'
+    transparent: 'transparent',
+    lightBlue: '#ccdceb',
 }
 
 export enum Fonts {

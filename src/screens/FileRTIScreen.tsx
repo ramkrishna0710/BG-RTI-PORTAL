@@ -12,6 +12,7 @@ import useKeyboardOffsetHeight from '@utils/useKeyboardOffsetHeight';
 import RtiRequest from '@components/customForm/RtiRequest';
 import Login from '@components/ui/Login';
 import { RouteProp } from '@react-navigation/native';
+import AssistantComponent from '@components/ui/AssistantComponent';
 
 type FileRTIScreenRouteProp = RouteProp<{ params: { isLogin: boolean } }, 'params'>;
 
@@ -69,6 +70,7 @@ const FileRTIScreen = ({ route }: { route: FileRTIScreenRouteProp }) => {
 
     return (
         <CustomSafeAreaView style={{ zIndex: 0 }}>
+            <AssistantComponent/>
             <ScrollView
                 ref={scrollViewRef}
                 keyboardShouldPersistTaps="handled"
