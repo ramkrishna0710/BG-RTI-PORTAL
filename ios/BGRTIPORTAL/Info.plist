@@ -49,6 +49,9 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Ionicons.ttf</string>
+  		<string>MaterialIcons.ttf</string>
+  		<string>MaterialCommunityIcons.ttf</string>
 		<string>Okra-Bold.ttf</string>
 		<string>Okra-ExtraBold.ttf</string>
 		<string>Okra-Medium.ttf</string>
