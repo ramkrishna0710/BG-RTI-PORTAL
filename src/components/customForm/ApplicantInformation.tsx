@@ -113,8 +113,8 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
 
       <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', gap: RV(5) }}>
         <TouchableOpacity style={styles.saveBtn}>
-          <Icon iconFamily='Ionicons' name='save-outline' size={RV(20)} color={Colors.textBlue} />
-          <CustomText fontFamily='Okra-Regular' fontSize={RV(14)} color={Colors.textBlue}>Save & Continue{'\n'}Later</CustomText>
+          <Icon iconFamily='Ionicons' name='save-outline' size={RV(18)} color={Colors.textBlue} />
+          <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.textBlue}>Save & Continue Later</CustomText>
         </TouchableOpacity>
 
         <CustomButton

@@ -34,11 +34,11 @@ const HeaderComponent = () => {
                 {/* Image/logo can go here */}
                 <View style={styles.headerMenuContainer}>
                     <Pressable onPress={() => setVisible(true)}>
-                        <Icon iconFamily="MaterialIcons" name="language" size={RFValue(26)} />
+                        <Icon iconFamily="MaterialIcons" name="language" size={RFValue(24)} />
                     </Pressable>
 
                     <Pressable onPress={() => setIsMenu(prev => !prev)}>
-                        <Icon iconFamily="MaterialIcons" name={isMenu ? 'close' : 'menu'} size={RFValue(26)} />
+                        <Icon iconFamily="MaterialIcons" name={isMenu ? 'close' : 'menu'} size={RFValue(24)} />
                     </Pressable>
                 </View>
 

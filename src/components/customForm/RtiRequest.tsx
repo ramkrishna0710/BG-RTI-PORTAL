@@ -37,7 +37,6 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
 
     return (
         <View style={styles.container}>
-            {/* Department Dropdown */}
             <View style={styles.fieldContainer}>
                 <Text style={styles.label}>
                     Department <Text style={styles.required}>*</Text>
@@ -56,7 +55,6 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                 />
             </View>
 
-            {/* Subject */}
             <View style={styles.fieldContainer}>
                 <Text style={styles.label}>
                     Subject <Text style={styles.required}>*</Text>
@@ -68,7 +66,6 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                 />
             </View>
 
-            {/* Description */}
             <View style={styles.fieldContainer}>
                 <Text style={styles.label}>
                     Description <Text style={styles.required}>*</Text>
@@ -84,7 +81,6 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                 <Text style={styles.charCount}>{description.length}/300</Text>
             </View>
 
-            {/* Upload Supporting Document */}
             <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Upload Supporting Document</Text>
                 <View style={{
@@ -93,16 +89,15 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                     alignItems: 'center',
                     gap: RV(11),
                 }}>
-                    <TouchableOpacity style={styles.uploadBtn} onPress={()=>{{}}}>
+                    <TouchableOpacity style={styles.uploadBtn} onPress={() => { { } }}>
                         <Text style={styles.uploadText}>Choose File</Text>
                     </TouchableOpacity>
                     <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.lightText}>No file chosen</CustomText>
                 </View>
                 {selectedFile && <Text style={styles.selectedFile}>{selectedFile}</Text>}
-                <CustomText fontFamily='Okra-Regular' fontSize={RV(9)} color={Colors.lightText} style={{marginTop:RV(2)}}>Allowed file types: PDF, JPG (Max size:2MB)</CustomText>
+                <CustomText fontFamily='Okra-Regular' fontSize={RV(9)} color={Colors.lightText} style={{ marginTop: RV(2) }}>Allowed file types: PDF, JPG (Max size:2MB)</CustomText>
             </View>
 
-            {/* Navigation Buttons */}
             <View style={styles.buttonRow}>
                 <CustomButton
                     label="Prev"

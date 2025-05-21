@@ -63,7 +63,7 @@ const HomeScreen = () => {
           <CustomText
             fontFamily='Okra-Bold'
             fontSize={RFValue(19)}
-            style={{ marginTop: RV(30) }}>
+            style={{ marginTop: RV(24) }}>
             How It Works
           </CustomText>
 
@@ -106,7 +106,7 @@ const HomeScreen = () => {
             <CustomText
               fontFamily='Okra-Bold'
               fontSize={RFValue(19)}
-              style={{ marginTop: RV(30) }}>
+              style={{ marginTop: RV(24) }}>
               Portal Statistics
             </CustomText>
             <View style={{ backgroundColor: Colors.background1, width: RV(70), height: 3, marginTop: 10 }} />
@@ -120,15 +120,15 @@ const HomeScreen = () => {
             <View style={{ margin: RV(4) }} />
             <CustomText
               fontFamily='Okra-Bold'
-              fontSize={RFValue(22)}
+              fontSize={RFValue(16)}
               style={{ marginTop: RV(30), textAlign: 'center' }}>
               Ready to file your RTI application?
             </CustomText>
             <CustomText
               fontFamily='Okra-Medium'
-              fontSize={RFValue(14)}
+              fontSize={RFValue(12)}
               color={Colors.tertiary}
-              style={{ marginTop: RV(10), textAlign: 'center' }}>
+              style={{ marginVertical: RV(10), textAlign: 'center' }}>
               Access information from government departments with ease through our streamlined online RTI portal
             </CustomText>
 
