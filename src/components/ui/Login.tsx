@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, TextInput, View, TouchableOpacity, ActivityIndicator, Text } from 'react-native'
 import React, { useState } from 'react'
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView'
 import CustomText from '@components/global/CustomText'
@@ -7,44 +7,124 @@ import { Colors } from '@unistyles/Contstants'
 import CustomButton from './CustomButton'
 import BreakerText from './BreakerText'
 import Icon from '@components/global/Icon'
+import { isEmailValid, isPasswordStrong } from '@utils/validators'
+import { showToast } from '@utils/ToastUtils'
+import { loginUser } from '@api/auth'
+import { useAuth } from '@contexts/AuthContext'
+import { navigate } from '@utils/NavigationUtils'
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+
+    const { login, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                <ActivityIndicator color={'white'} size={'large'} />
+            </View>
+        );
+    }
+
+    const onHandleLogin = async () => {
+        let isValid = true;
+
+        let firstErrorMessage = '';
+
+        if (!isEmailValid(email)) {
+            setEmailError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Please enter a valid email address';
+            isValid = false;
+        } else {
+            setEmailError(false);
+        }
+
+        if (!isPasswordStrong(password)) {
+            setPasswordError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Password must be at least 6 characters';
+            isValid = false;
+        } else {
+            setPasswordError(false);
+        }
+
+        if (!isValid) {
+            showToast(firstErrorMessage, 'error');
+            return;
+        }
+
+        try {
+            const data = await loginUser(email, password, rememberMe);
+            await login(data.token);
+            showToast(data.message, 'success');
+        } catch (err: any) {
+            console.log(err.response?.data?.message);
+            showToast(err.response?.data?.message, 'error');
+        }
+    }
 
     return (
         <CustomSafeAreaView style={{ paddingHorizontal: 14 }}>
             <View style={styles.container}>
                 <CustomText fontFamily='Okra-Bold' fontSize={RV(22)} style={{ textAlign: 'center' }}>Login</CustomText>
-                <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.lightText} style={{ textAlign: 'center' }}>
-                    Don't have an account? <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.textBlue}>
+                <CustomText
+                    fontFamily="Okra-Regular"
+                    fontSize={RV(12)}
+                    color={Colors.lightText}
+                    style={{ textAlign: 'center', marginTop: RV(4) }}
+                >
+                    Don't have an account?{' '}
+                    <Text
+                        style={{ fontSize: RV(12), color: Colors.textBlue }}
+                        onPress={() => navigate('RegisterScreen')}
+                    >
                         Create an account
-                    </CustomText>
+                    </Text>
                 </CustomText>
 
                 <View style={styles.inputGroup}>
-                    <CustomText fontSize={RV(13)} color={Colors.lightText} fontFamily='Okra-Medium'>Email</CustomText>
+                    <CustomText fontSize={RV(12)} color={emailError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>
+                        Email
+                    </CustomText>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, emailError && { borderColor: Colors.red }]}
                         value={email}
-                        onChangeText={setEmail}
+                        onChangeText={(text) => {
+                            setEmail(text);
+                            if (emailError) setEmailError(false);
+                        }}
                         keyboardType="email-address"
                     />
+                    {emailError && (
+                        <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                            Please enter a valid email address.
+                        </CustomText>
+                    )}
                 </View>
 
                 <View style={styles.inputGroup}>
-                    <CustomText fontSize={RV(13)} color={Colors.lightText} fontFamily='Okra-Medium'>
+                    <CustomText fontSize={RV(12)} color={passwordError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>
                         Password
                     </CustomText>
                     <View style={styles.passwordContainer}>
                         <TextInput
-                            style={[styles.input, { paddingRight: RV(40) }]} // space for the icon
+                            style={[styles.input, passwordError && { borderColor: Colors.red }, { paddingRight: RV(40) }]}
                             value={password}
-                            onChangeText={setPassword}
+                            onChangeText={(text) => {
+                                setPassword(text);
+                                if (passwordError) setPasswordError(false);
+                            }}
                             secureTextEntry={!showPassword}
                         />
+                        {passwordError && (
+                            <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                                Please enter 6 digit password.
+                            </CustomText>
+                        )}
                         <TouchableOpacity
                             style={styles.eyeIcon}
                             onPress={() => setShowPassword(!showPassword)}
@@ -59,7 +139,6 @@ const Login = () => {
                     </View>
                 </View>
 
-
                 <View style={styles.rememberContainer}>
                     <TouchableOpacity
                         style={styles.checkbox}
@@ -69,9 +148,9 @@ const Login = () => {
                             iconFamily='MaterialIcons'
                             name={rememberMe ? 'check-box' : 'check-box-outline-blank'}
                             size={RV(18)}
-                            color={Colors.lightText}
+                            color={rememberMe ? Colors.textBlue : Colors.lightText}
                         />
-                        <CustomText fontSize={RV(11)} color={Colors.lightText} style={{ marginLeft: 6 }}>
+                        <CustomText fontSize={RV(11)} color={rememberMe ? Colors.textBlue : Colors.lightText} style={{ marginLeft: 6 }}>
                             Remember Me
                         </CustomText>
                     </TouchableOpacity>
@@ -90,7 +169,7 @@ const Login = () => {
                     textColor={Colors.background}
                     fontWeight={'bold'}
                     fontSize={RV(16)}
-                    onPress={() => { }}
+                    onPress={() => onHandleLogin()}
                 />
 
                 <BreakerText text='Or continue with' />

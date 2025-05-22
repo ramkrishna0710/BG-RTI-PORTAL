@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, TextInput, View, TouchableOpacity, ScrollView, Text } from 'react-native'
 import React, { useState } from 'react'
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView'
 import CustomText from '@components/global/CustomText'
@@ -99,10 +99,19 @@ const RegisterScreen = () => {
             <ScrollView>
                 <View style={styles.container}>
                     <CustomText fontFamily='Okra-Bold' fontSize={RV(22)} style={{ textAlign: 'center' }}>Register</CustomText>
-                    <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.lightText} style={{ textAlign: 'center' }}>
-                        Already have an account? <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.textBlue}>
-                            Login now
-                        </CustomText>
+                    <CustomText
+                        fontFamily="Okra-Regular"
+                        fontSize={RV(12)}
+                        color={Colors.lightText}
+                        style={{ textAlign: 'center', marginTop: RV(4) }}
+                    >
+                        Already have an account?{' '}
+                        <Text
+                            style={{ fontSize: RV(12), color: Colors.textBlue }}
+                            onPress={() => navigate('LoginScreen')}
+                        >
+                            Login Now
+                        </Text>
                     </CustomText>
 
                     <View style={styles.inputGroup}>

@@ -1,28 +1,61 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { RV } from '@unistyles/unistyles'
 import { Colors } from '@unistyles/Contstants'
 import Icon from '@components/global/Icon'
 import CustomText from '@components/global/CustomText'
 import { navigate } from '@utils/NavigationUtils'
+import { useAuth } from '@contexts/AuthContext'
+import { getProfile } from '@api/auth'
+
+interface Profile {
+  fullname: string;
+  role: string;
+}
 
 const DashboardHeader = () => {
-  const [isMenu, setIsMenu] = useState(false)
   const route = useRoute()
+  const { logout } = useAuth();
+
+  const [isMenu, setIsMenu] = useState(false)
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log("Profile ", profile);
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfile();
+        setProfile(data.data);
+      } catch (err) {
+        setError('Failed to load profile');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const menuItems = [
     { title: 'Dashboard', icon: 'grid-outline', routeName: 'DashboardScreen' },
     { title: 'Applications', icon: 'document-text-outline', routeName: 'ApplicationScreen' },
     { title: 'Profile', icon: 'person-outline', routeName: 'ProfileScreen' },
     { title: 'Settings', icon: 'settings-outline', routeName: 'SettingsScreen' },
-    { title: 'Logout', icon: 'log-out-outline', routeName: 'LoginScreen' },
+    { title: 'Logout', icon: 'log-out-outline', action: logout },
   ]
 
-  const handleNavigate = (routeName: string) => {
+  const handleNavigate = (item: typeof menuItems[number]) => {
     setIsMenu(false)
-    if (route.name !== routeName) {
-      navigate(routeName as never)
+    if (item.action) {
+      item.action()
+    } else if (route.name !== item.routeName) {
+      navigate(item.routeName as never)
     }
   }
 
@@ -34,8 +67,8 @@ const DashboardHeader = () => {
             <Icon iconFamily="Ionicons" name="person-outline" size={RV(20)} />
           </View>
           <View style={styles.userTextContainer}>
-            <CustomText fontFamily="Okra-Bold">Test User</CustomText>
-            <CustomText>Citizen</CustomText>
+            <CustomText fontFamily="Okra-Bold">{profile?.fullname}</CustomText>
+            <CustomText>{profile?.role}</CustomText>
           </View>
         </View>
         <TouchableOpacity onPress={() => setIsMenu(prev => !prev)}>
@@ -57,7 +90,7 @@ const DashboardHeader = () => {
                     borderRadius: RV(10),
                   },
                 ]}
-                onPress={() => handleNavigate(item.routeName)}
+                onPress={() => handleNavigate(item)}
               >
                 <Icon
                   iconFamily="Ionicons"
