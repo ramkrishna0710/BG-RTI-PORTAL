@@ -16,3 +16,8 @@ export const isMobileNumberValid = (mobileNumber: string): boolean => {
 export const isPasswordStrong = (password: string): boolean => {
   return password.length >= 6;
 };
+
+export const isAadhaarValid = (aadhaar: string): boolean => {
+  const aadhaarRegex = /^\d{12}$/;
+  return aadhaarRegex.test(aadhaar);
+};

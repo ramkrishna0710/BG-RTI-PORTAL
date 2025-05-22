@@ -10,7 +10,8 @@
     "test": "jest",
     "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install",
     "postinstall": "npx parch-package",
-    "generate-apk": "cd android && ./gradlew assembleRelease"
+    "generate-apk": "cd android && ./gradlew assembleRelease",
+    "clean-rebuild": "cd android && gradlew.bat clean && cd .."
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -48,6 +49,7 @@
     "@react-native/typescript-config": "0.79.2",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.0.0",
+    "@types/react-native-document-picker": "^3.1.1",
     "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-test-renderer": "^19.0.0",
     "babel-plugin-module-resolver": "^5.0.2",

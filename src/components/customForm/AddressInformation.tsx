@@ -1,26 +1,23 @@
-import CustomText from '@components/global/CustomText';
-import Icon from '@components/global/Icon';
 import CustomButton from '@components/ui/CustomButton';
 import { Colors } from '@unistyles/Contstants';
 import { RV } from '@unistyles/unistyles';
 import React, { useState } from 'react';
-import RNPickerSelect from 'react-native-picker-select';
 import {
     View,
     Text,
     TextInput,
     StyleSheet,
     TouchableOpacity,
-    ScrollView,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { showToast } from '@utils/ToastUtils';
 
 type BplType = | 'Yes' | 'No' | null;
 
 const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: () => void }) => {
     const [addressLineOne, setAddressLineOne] = useState('');
     const [addressLineTwo, setAddressLineTwo] = useState('');
-    const [state, setState] = useState('');
+    const [state, setState] = useState('Bihar');
     const [block, setBlock] = useState('');
     const [panchayat, setPanchayat] = useState('');
     const [village, setVillage] = useState('');
@@ -30,6 +27,15 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
     const [selectEducation, setSelectEducation] = useState(null);
     const [otherEducation, setOtherEducation] = useState('');
     const [selectDistric, setSelectDistric] = useState(null);
+
+    const [addressLineOneError, setAddressLineOneError] = useState(false);
+    const [stateError, setStateError] = useState(false);
+    const [districtError, setDistrictError] = useState(false);
+    const [blockError, setBlockError] = useState(false);
+    const [pinCodeError, setPinCodeError] = useState(false);
+    const [educationError, setEducationError] = useState(false);
+
+
     const [educationOptions, setEducationOptions] = useState([
         { label: 'Primary', value: 'PR' },
         { label: 'Secondary', value: 'SE' },
@@ -39,6 +45,7 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
         { label: 'Doctorate', value: 'DOC' },
         { label: 'Other', value: 'OTH' },
     ]);
+
     const [districOptions, setDistricOptions] = useState([
         { label: 'Patna', value: 'PR' },
         { label: 'Gaya', value: 'SE' },
@@ -52,17 +59,82 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
         </View>
     );
 
+
+    const onHandleNext = () => {
+        let isValid = true;
+        let firstErrorMessage = '';
+
+        if (!addressLineOne.trim()) {
+            setAddressLineOneError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Address Line 1 is required';
+            isValid = false;
+        } else {
+            setAddressLineOneError(false);
+        }
+
+        if (!state.trim()) {
+            setStateError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'State is required';
+            isValid = false;
+        } else {
+            setStateError(false);
+        }
+
+        if (!selectDistric) {
+            setDistrictError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'District must be selected';
+            isValid = false;
+        } else {
+            setDistrictError(false);
+        }
+
+        if (!block.trim()) {
+            setBlockError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Block is required';
+            isValid = false;
+        } else {
+            setBlockError(false);
+        }
+
+        if (!pinCode.trim() || pinCode.length !== 6) {
+            setPinCodeError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Enter a valid 6-digit PIN Code';
+            isValid = false;
+        } else {
+            setPinCodeError(false);
+        }
+
+        if (!selectEducation) {
+            setEducationError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Education must be selected';
+            isValid = false;
+        } else {
+            setEducationError(false);
+        }
+
+        if (!isValid) {
+            showToast(firstErrorMessage, 'error');
+            return;
+        }
+
+        goToNext();
+    };
+
+
     return (
         <View style={styles.container}>
 
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>
+                <Text style={[styles.label, { color: addressLineOneError ? Colors.red : Colors.lightText }]}>
                     Address Line 1 <Text style={styles.required}>*</Text>
                 </Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, addressLineOneError && { borderColor: Colors.red }]}
                     value={addressLineOne}
-                    onChangeText={setAddressLineOne}
+                    onChangeText={(text) => {
+                        setAddressLineOne(text);
+                        if (addressLineOneError) setAddressLineOneError(false);
+                    }}
                 />
             </View>
 
@@ -78,19 +150,23 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
             </View>
 
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>
+                <Text style={[styles.label, { color: stateError ? Colors.red : Colors.lightText }]}>
                     State <Text style={styles.required}>*</Text>
                 </Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, stateError && { borderColor: Colors.red }]}
                     value={state}
-                    onChangeText={setState}
+                    editable={false}
+                    onChangeText={(text) => {
+                        setState(text);
+                        if (stateError) setStateError(false);
+                    }}
                 />
             </View>
 
             <View style={[styles.fieldContainer]}>
-                <Text style={styles.label}>
-                    Education <Text style={styles.required}>*</Text>
+                <Text style={[styles.label, { color: districtError ? Colors.red : Colors.lightText }]}>
+                    Distric <Text style={styles.required}>*</Text>
                 </Text>
                 <DropDownPicker
                     open={open}
@@ -100,18 +176,18 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
                     setValue={setSelectDistric}
                     setItems={setDistricOptions}
                     placeholder="Select District"
-                    style={styles.input}
+                    style={[styles.input, districtError && { borderColor: Colors.red }]}
                     dropDownContainerStyle={{ borderColor: '#ccc' }}
                     listMode='SCROLLVIEW'
                 />
             </View>
 
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>
+                <Text style={[styles.label, { color: blockError ? Colors.red : Colors.lightText }]}>
                     Block <Text style={styles.required}>*</Text>
                 </Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, blockError && { borderColor: Colors.red }]}
                     value={block}
                     onChangeText={setBlock}
                 />
@@ -140,13 +216,16 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
             </View>
 
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>
+                <Text style={[styles.label, { color: pinCodeError ? Colors.red : Colors.lightText }]}>
                     PIN Code <Text style={styles.required}>*</Text>
                 </Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, pinCodeError && { borderColor: Colors.red }]}
                     value={pinCode}
-                    onChangeText={setPinCode}
+                    onChangeText={(text) => {
+                        setPinCode(text);
+                        if (pinCodeError) setPinCodeError(false);
+                    }}
                     placeholder="6-digit PIN code"
                     keyboardType="phone-pad"
                     maxLength={6}
@@ -155,7 +234,7 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
             </View>
 
             <View style={[styles.fieldContainer]}>
-                <Text style={styles.label}>
+                <Text style={[styles.label, { color: educationError ? Colors.red : Colors.lightText }]}>
                     Education <Text style={styles.required}>*</Text>
                 </Text>
                 <DropDownPicker
@@ -166,7 +245,7 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
                     setValue={setSelectEducation}
                     setItems={setEducationOptions}
                     placeholder="Select your education"
-                    style={styles.input}
+                    style={[styles.input, educationError && { borderColor: Colors.red }]}
                     dropDownContainerStyle={{ borderColor: '#ccc' }}
                     listMode='SCROLLVIEW'
                 />
@@ -242,7 +321,7 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
                     iconSize={RV(20)}
                     iconColor={Colors.background}
                     onPress={() =>
-                        goToNext()
+                        onHandleNext()
                     }
                 />
             </View>

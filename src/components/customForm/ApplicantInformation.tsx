@@ -3,6 +3,8 @@ import Icon from '@components/global/Icon';
 import CustomButton from '@components/ui/CustomButton';
 import { Colors } from '@unistyles/Contstants';
 import { RV } from '@unistyles/unistyles';
+import { showToast } from '@utils/ToastUtils';
+import { isAadhaarValid, isEmailValid, isMobileNumberValid, isNameValid } from '@utils/validators';
 import React, { useState } from 'react';
 import {
   View,
@@ -22,6 +24,67 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
   const [emailAddress, setEmailAddress] = useState('');
   const [aadhaarNumber, setAadhaarNumber] = useState('');
 
+  const [fullNameError, setFullNameError] = useState(false);
+  const [genderError, setGenderError] = useState(false);
+  const [mobileNumberError, setMobileNumberError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [aadhaarError, setAadhaarError] = useState(false);
+
+  const onHandleNext = async () => {
+    let isValid = true;
+    let firstErrorMessage = '';
+
+    if (!isNameValid(fullName)) {
+      setFullNameError(true);
+      if (!firstErrorMessage) firstErrorMessage = 'Full name must be at least 2 characters long';
+      isValid = false;
+    } else {
+      setFullNameError(false);
+    }
+
+    if (!gender) {
+      setGenderError(true);
+      if (!firstErrorMessage) firstErrorMessage = 'Gender must be selected';
+      isValid = false;
+    } else {
+      setGenderError(false);
+    }
+
+    if (!isMobileNumberValid(mobileNumber)) {
+      setMobileNumberError(true);
+      if (!firstErrorMessage) firstErrorMessage = 'Enter a valid 10-digit mobile number';
+      isValid = false;
+    } else {
+      setMobileNumberError(false);
+    }
+
+    if (!isEmailValid(emailAddress)) {
+      setEmailError(true);
+      if (!firstErrorMessage) firstErrorMessage = 'Please enter a valid email address';
+      isValid = false;
+    } else {
+      setEmailError(false);
+    }
+
+    if (aadhaarNumber && !isAadhaarValid(aadhaarNumber)) {
+      setAadhaarError(true);
+      if (!firstErrorMessage) firstErrorMessage = 'Aadhaar must be a 12-digit number';
+      isValid = false;
+    } else {
+      setAadhaarError(false);
+    }
+
+    if (!isValid) {
+      showToast(firstErrorMessage, 'error');
+      return;
+    }
+
+    // If valid
+    goToNext();
+
+  }
+
+
   const RadioButton = ({ selected }: { selected: boolean }) => (
     <View style={[styles.radioOuter, selected && styles.radioOuterSelected]}>
       {selected && <View style={styles.radioInner} />}
@@ -31,31 +94,35 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
   return (
     <View style={styles.container}>
 
-      {/* Full Name */}
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>
+        <Text style={[styles.label, { color: fullNameError ? Colors.red : Colors.lightText }]}>
           Full Name <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, fullNameError && { borderColor: Colors.red }]}
           value={fullName}
-          onChangeText={setFullName}
+          onChangeText={(text) => {
+            setFullName(text);
+            if (fullNameError) setFullNameError(false);
+          }}
           placeholder="Enter your full name"
           placeholderTextColor="#999"
         />
       </View>
 
-      {/* Gender */}
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>
-          Gender <Text style={styles.required}>*</Text>
+        <Text style={[styles.label, { color: genderError ? Colors.red : Colors.lightText }]}>
+          Gender <Text style={[styles.required, { borderColor: genderError ? Colors.red : Colors.lightText }]}>*</Text>
         </Text>
         <View style={styles.radioGroup}>
           {['Male', 'Female', 'Other'].map((g) => (
             <TouchableOpacity
               key={g}
               style={styles.radioOption}
-              onPress={() => setGender(g as GenderType)}
+              onPress={() => {
+                setGender(g as GenderType)
+                if (genderError) setGenderError(false)
+              }}
               activeOpacity={0.8}
             >
               <RadioButton selected={gender === g} />
@@ -65,15 +132,17 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
         </View>
       </View>
 
-      {/* Mobile Number */}
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>
+        <Text style={[styles.label, { color: mobileNumberError ? Colors.red : Colors.lightText }]}>
           Mobile Number <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, emailError && { borderColor: Colors.red }]}
           value={mobileNumber}
-          onChangeText={setMobileNumber}
+          onChangeText={(text) => {
+            setMobileNumber(text);
+            if (mobileNumberError) setMobileNumberError(false);
+          }}
           placeholder="10-digit mobile number"
           keyboardType="phone-pad"
           maxLength={10}
@@ -81,15 +150,17 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
         />
       </View>
 
-      {/* Email Address */}
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>
+        <Text style={[styles.label, { color: emailError ? Colors.red : Colors.lightText }]}>
           Email Address <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, emailError && { borderColor: Colors.red }]}
           value={emailAddress}
-          onChangeText={setEmailAddress}
+          onChangeText={(text) => {
+            setEmailAddress(text);
+            if (emailError) setEmailError(false);
+          }}
           placeholder="example@domain.com"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -97,14 +168,15 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
         />
       </View>
 
-      {/* Aadhaar Number */}
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Aadhaar Number (Optional)</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, aadhaarError && { borderColor: Colors.red }]}
           value={aadhaarNumber}
-          onChangeText={setAadhaarNumber}
-          placeholder="12-digit Aadhaar number"
+          onChangeText={(text) => {
+            setAadhaarNumber(text);
+            if (aadhaarError) setAadhaarError(false);
+          }} placeholder="12-digit Aadhaar number"
           keyboardType="number-pad"
           maxLength={12}
           placeholderTextColor="#999"
@@ -113,8 +185,8 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
 
       <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', gap: RV(5) }}>
         <TouchableOpacity style={styles.saveBtn}>
-          <Icon iconFamily='Ionicons' name='save-outline' size={RV(20)} color={Colors.textBlue} />
-          <CustomText fontFamily='Okra-Regular' fontSize={RV(14)} color={Colors.textBlue}>Save & Continue{'\n'}Later</CustomText>
+          <Icon iconFamily='Ionicons' name='save-outline' size={RV(18)} color={Colors.textBlue} />
+          <CustomText fontFamily='Okra-Regular' fontSize={RV(10)} color={Colors.textBlue}>Save & Continue Later</CustomText>
         </TouchableOpacity>
 
         <CustomButton
@@ -129,9 +201,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
           iconFamily='MaterialIcons'
           iconSize={RV(20)}
           iconColor={Colors.background}
-          onPress={() =>
-            goToNext()
-          }
+          onPress={() => onHandleNext()}
         />
       </View>
     </View>
@@ -148,7 +218,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 15,
     marginBottom: 8,
-    color: '#333',
     fontWeight: '600',
   },
   required: {
