@@ -1,10 +1,16 @@
 import React from 'react'
 import Navigation from './src/navigation/Navigation';
 import '@unistyles/unistyles'
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { AuthProvider } from '@contexts/AuthContext';
 
 const App = () => {
   return (
-    <Navigation/>
+    <AuthProvider>
+      <RootSiblingParent>
+        <Navigation />
+      </RootSiblingParent>
+    </AuthProvider>
   )
 }
 

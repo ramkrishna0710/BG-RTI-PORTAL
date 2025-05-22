@@ -14,10 +14,8 @@ import Login from '@components/ui/Login';
 import { RouteProp } from '@react-navigation/native';
 import AssistantComponent from '@components/ui/AssistantComponent';
 
-type FileRTIScreenRouteProp = RouteProp<{ params: { isLogin: boolean } }, 'params'>;
 
-const FileRTIScreen = ({ route }: { route: FileRTIScreenRouteProp }) => {
-    const { isLogin } = route.params ?? { isLogin: false };
+const FileRTIScreen = () => {
 
     const items = [
         { value: '1', label: 'Applications Information' },
@@ -80,80 +78,75 @@ const FileRTIScreen = ({ route }: { route: FileRTIScreenRouteProp }) => {
                 showsVerticalScrollIndicator={false}
             >
 
-                {isLogin ? (
-
+                <View style={{
+                    backgroundColor: Colors.background,
+                    paddingVertical: RV(20),
+                    paddingHorizontal: 10,
+                }}>
                     <View style={{
-                        backgroundColor: Colors.background,
-                        paddingVertical: RV(20),
-                        paddingHorizontal: 10,
+                        borderColor: Colors.lightText,
+                        borderWidth: 0.2,
+                        borderRadius: 10,
+                        elevation: 1,
+                        shadowColor: Colors.lightText,
+                        shadowOpacity: 0.05,
+                        shadowOffset: { width: 1, height: 1 },
+                        shadowRadius: 4,
                     }}>
                         <View style={{
-                            borderColor: Colors.lightText,
-                            borderWidth: 0.2,
-                            borderRadius: 10,
-                            elevation: 1,
-                            shadowColor: Colors.lightText,
-                            shadowOpacity: 0.05,
-                            shadowOffset: { width: 1, height: 1 },
-                            shadowRadius: 4,
+                            backgroundColor: Colors.textBlue,
+                            paddingVertical: RV(22),
+                            paddingHorizontal: RV(16),
+                            borderTopRightRadius: RV(10),
+                            borderTopLeftRadius: RV(10),
                         }}>
-                            <View style={{
-                                backgroundColor: Colors.textBlue,
-                                paddingVertical: RV(22),
-                                paddingHorizontal: RV(16),
-                                borderTopRightRadius: RV(10),
-                                borderTopLeftRadius: RV(10),
-                            }}>
-                                <CustomText fontSize={RV(16)} fontFamily='Okra-Bold'>
-                                    RTI Application Form
-                                </CustomText>
-                            </View>
-                            <View style={{ flexDirection: 'row', marginTop: RV(10), justifyContent: 'space-evenly', alignItems: 'center' }}>
-                                {items.map((item, index) => (
-                                    <Pressable
-                                        key={item.value}
-                                        onPress={() => goToIndex(index)}
-                                        style={{ alignItems: 'center', maxWidth: RV(100), flexDirection: 'column' }}
+                            <CustomText fontSize={RV(16)} fontFamily='Okra-Bold'>
+                                RTI Application Form
+                            </CustomText>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginTop: RV(10), justifyContent: 'space-evenly', alignItems: 'center' }}>
+                            {items.map((item, index) => (
+                                <Pressable
+                                    key={item.value}
+                                    onPress={() => goToIndex(index)}
+                                    style={{ alignItems: 'center', maxWidth: RV(100), flexDirection: 'column' }}
+                                >
+                                    <View
+                                        style={{
+                                            height: RV(40),
+                                            width: RV(40),
+                                            borderRadius: RV(20),
+                                            backgroundColor: activeIndex === index ? Colors.textBlue : '#cacacc',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginBottom: RV(4),
+                                        }}
                                     >
-                                        <View
-                                            style={{
-                                                height: RV(40),
-                                                width: RV(40),
-                                                borderRadius: RV(20),
-                                                backgroundColor: activeIndex === index ? Colors.textBlue : '#cacacc',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                marginBottom: RV(4),
-                                            }}
-                                        >
-                                            <CustomText
-                                                fontFamily="Okra-Bold"
-                                                color={activeIndex === index ? Colors.background : '#606061'}
-                                            >
-                                                {item.value}
-                                            </CustomText>
-                                        </View>
-
                                         <CustomText
-                                            color={Colors.text}
-                                            fontFamily='Okra-Regular'
-                                            fontSize={RV(9)}
-                                            style={{ textAlign: 'center' }}
+                                            fontFamily="Okra-Bold"
+                                            color={activeIndex === index ? Colors.background : '#606061'}
                                         >
-                                            {item.label}
+                                            {item.value}
                                         </CustomText>
-                                    </Pressable>
-                                ))}
-                            </View>
+                                    </View>
 
-                            <View style={{ padding: RV(16), minHeight: RV(450) }}>
-                                {renderForm()}
-                            </View>
+                                    <CustomText
+                                        color={Colors.text}
+                                        fontFamily='Okra-Regular'
+                                        fontSize={RV(9)}
+                                        style={{ textAlign: 'center' }}
+                                    >
+                                        {item.label}
+                                    </CustomText>
+                                </Pressable>
+                            ))}
+                        </View>
+
+                        <View style={{ padding: RV(16), minHeight: RV(450) }}>
+                            {renderForm()}
                         </View>
                     </View>
-                ) : (
-                    <Login />
-                )}
+                </View>
                 <FooterComponent />
             </ScrollView>
         </CustomSafeAreaView>

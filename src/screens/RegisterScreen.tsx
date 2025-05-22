@@ -10,6 +10,12 @@ import BreakerText from '@components/ui/BreakerText'
 import HeaderComponent from '@components/ui/dashboard/HeaderComponent'
 import FooterComponent from '@components/ui/dashboard/FooterComponent'
 import AssistantComponent from '@components/ui/AssistantComponent'
+import { isEmailValid, isMobileNumberValid, isNameValid, isPasswordStrong } from '@utils/validators'
+import { showToast } from '@utils/ToastUtils'
+import { registerUser } from '@api/auth'
+import { navigate, resetAndNavigate } from '@utils/NavigationUtils'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useAuth } from '@contexts/AuthContext'
 
 const RegisterScreen = () => {
     const [name, setName] = useState('');
@@ -18,11 +24,78 @@ const RegisterScreen = () => {
     const [password, setPassword] = useState('');
     const [confrimPassword, setConfrimPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+    const [nameError, setNameError] = useState(false);
+    const [mobileNumberError, setMobileNumberError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+    const [confrimPasswordError, setConfrimPasswordError] = useState(false);
+
+    const { login } = useAuth();
+
+    const onHandleRegister = async () => {
+        let isValid = true;
+
+        let firstErrorMessage = '';
+
+        if (!isNameValid(name)) {
+            setNameError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Name must be at least 2 characters long';
+            isValid = false;
+        } else {
+            setNameError(false);
+        }
+
+        if (!isEmailValid(email)) {
+            setEmailError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Please enter a valid email address';
+            isValid = false;
+        } else {
+            setEmailError(false);
+        }
+
+        if (!isMobileNumberValid(mobileNumber)) {
+            setMobileNumberError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Enter a valid 10-digit mobile number';
+            isValid = false;
+        } else {
+            setMobileNumberError(false);
+        }
+
+        if (!isPasswordStrong(password)) {
+            setPasswordError(true);
+            if (!firstErrorMessage) firstErrorMessage = 'Password must be at least 6 characters';
+            isValid = false;
+        } else {
+            setPasswordError(false);
+        }
+
+        if (password !== confrimPassword) {
+            setConfrimPasswordError(true)
+            if (!firstErrorMessage) firstErrorMessage = 'Passwords do not match';
+            isValid = false;
+        } else {
+            setConfrimPasswordError(false)
+        }
+
+        if (!isValid) {
+            showToast(firstErrorMessage, 'error');
+            return;
+        }
+
+        try {
+            const data = await registerUser(name, email, mobileNumber, password);
+            await login(data.token);
+            showToast(data.message, 'success');
+        } catch (err: any) {
+            showToast(err.response?.data?.message, 'error');
+        }
+    };
+
 
     return (
         <CustomSafeAreaView>
             <HeaderComponent />
-            <AssistantComponent/>
+            <AssistantComponent />
             <ScrollView>
                 <View style={styles.container}>
                     <CustomText fontFamily='Okra-Bold' fontSize={RV(22)} style={{ textAlign: 'center' }}>Register</CustomText>
@@ -33,45 +106,79 @@ const RegisterScreen = () => {
                     </CustomText>
 
                     <View style={styles.inputGroup}>
-                        <CustomText fontSize={RV(12)} color={Colors.lightText} fontFamily='Okra-Medium'>Full Name</CustomText>
+                        <CustomText fontSize={RV(12)} color={nameError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>Full Name</CustomText>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, nameError && { borderColor: Colors.red }]}
                             value={name}
-                            onChangeText={setName}
+                            onChangeText={(text) => {
+                                setName(text);
+                                if (nameError) setNameError(false);
+                            }}
                         />
+                        {nameError && (
+                            <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                                Please enter Your Name.
+                            </CustomText>
+                        )}
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <CustomText fontSize={RV(12)} color={Colors.lightText} fontFamily='Okra-Medium'>Email</CustomText>
+                        <CustomText fontSize={RV(12)} color={emailError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>
+                            Email
+                        </CustomText>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, emailError && { borderColor: Colors.red }]}
                             value={email}
-                            onChangeText={setEmail}
+                            onChangeText={(text) => {
+                                setEmail(text);
+                                if (emailError) setEmailError(false);
+                            }}
                             keyboardType="email-address"
                         />
+                        {emailError && (
+                            <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                                Please enter a valid email address.
+                            </CustomText>
+                        )}
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <CustomText fontSize={RV(12)} color={Colors.lightText} fontFamily='Okra-Medium'>Mobile Number</CustomText>
+                        <CustomText fontSize={RV(12)} color={mobileNumberError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>Mobile Number</CustomText>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, emailError && { borderColor: Colors.red }]}
                             value={mobileNumber}
-                            onChangeText={setMobileNumber}
+                            onChangeText={(text) => {
+                                setMobileNumber(text);
+                                if (mobileNumberError) setMobileNumberError(false);
+                            }}
                             keyboardType='name-phone-pad'
                         />
+                        {mobileNumberError && (
+                            <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                                Please enter a valid mobile number.
+                            </CustomText>
+                        )}
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <CustomText fontSize={RV(12)} color={Colors.lightText} fontFamily='Okra-Medium'>
+                        <CustomText fontSize={RV(12)} color={passwordError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>
                             Password
                         </CustomText>
                         <View style={styles.passwordContainer}>
                             <TextInput
-                                style={[styles.input, { paddingRight: RV(40) }]}
+                                style={[styles.input, passwordError && { borderColor: Colors.red }, { paddingRight: RV(40) }]}
                                 value={password}
-                                onChangeText={setPassword}
+                                onChangeText={(text) => {
+                                    setPassword(text);
+                                    if (passwordError) setPasswordError(false);
+                                }}
                                 secureTextEntry={!showPassword}
                             />
+                            {passwordError && (
+                                <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                                    Please enter 6 digit password.
+                                </CustomText>
+                            )}
                             <TouchableOpacity
                                 style={styles.eyeIcon}
                                 onPress={() => setShowPassword(!showPassword)}
@@ -87,15 +194,23 @@ const RegisterScreen = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <CustomText fontSize={RV(12)} color={Colors.lightText} fontFamily='Okra-Medium'>
+                        <CustomText fontSize={RV(12)} color={confrimPasswordError ? Colors.red : Colors.lightText} fontFamily='Okra-Medium'>
                             Confirm Password
                         </CustomText>
                         <TextInput
-                            style={[styles.input, { paddingRight: RV(40) }]}
+                            style={[styles.input, passwordError && { borderColor: Colors.red }, { paddingRight: RV(40) }]}
                             value={confrimPassword}
-                            onChangeText={setConfrimPassword}
+                            onChangeText={(text) => {
+                                setConfrimPassword(text);
+                                if (confrimPasswordError) setConfrimPasswordError(false);
+                            }}
                             secureTextEntry={!showPassword}
                         />
+                        {confrimPasswordError && (
+                            <CustomText fontSize={RV(10)} color={Colors.red} fontFamily="Okra-Regular">
+                                Enter Confrim Password
+                            </CustomText>
+                        )}
                     </View>
 
                     <View style={{ height: RV(20) }} />
@@ -107,7 +222,7 @@ const RegisterScreen = () => {
                         textColor={Colors.background}
                         fontWeight={'bold'}
                         fontSize={RV(16)}
-                        onPress={() => { }}
+                        onPress={() => onHandleRegister()}
                     />
 
                     <BreakerText text='Or continue with' />
@@ -176,7 +291,7 @@ const styles = StyleSheet.create({
     eyeIcon: {
         position: 'absolute',
         right: RV(12),
-        top: '55%',
+        top: '45%',
         transform: [{ translateY: -RV(9) }],
     },
     rememberContainer: {

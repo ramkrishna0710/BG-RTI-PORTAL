@@ -23,6 +23,7 @@ export const Colors = {
     textBlueDark: '#111825',
     transparent: 'transparent',
     lightBlue: '#ccdceb',
+    red: 'red'
 }
 
 export enum Fonts {
