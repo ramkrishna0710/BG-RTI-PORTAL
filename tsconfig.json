@@ -6,11 +6,14 @@
     "baseUrl": "./",
     "paths": {
       "@assets/*": ["src/assets/*"],
-      "@features/*": ["src/features/*"],
+      "@screens/*": ["src/screens/*"],
       "@navigation/*": ["src/navigation/*"],
       "@components/*": ["src/components/*"],
       "@unistyles/*": ["src/unistyles/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@api/*": ["src/api/*"],
+      "@constants/*": ["src/constants/*"],
+      "@contexts/*": ["src/contexts/*"],
     }
   }
 }

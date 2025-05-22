@@ -14,9 +14,11 @@ import HeaderComponent from '@components/ui/dashboard/HeaderComponent'
 import { navigate } from '@utils/NavigationUtils'
 import AssistantComponent from '@components/ui/AssistantComponent'
 import CustomStatusBar from '@components/statusbar/CustomStatubar'
+import { useAuth } from '@contexts/AuthContext'
 
 const HomeScreen = () => {
   const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
 
   return (
     <CustomSafeAreaView>
@@ -45,7 +47,7 @@ const HomeScreen = () => {
           <CustomButton
             label='File RTI Application'
             width="60%"
-            onPress={() => navigate('FileRTIScreen')}
+            onPress={() => isAuthenticated ? navigate('FileRTIScreen') : navigate('LoginScreen')}
           />
 
           <CustomButton
@@ -54,7 +56,7 @@ const HomeScreen = () => {
             label='Track Application'
             textColor={Colors.tertiary}
             width="60%"
-            onPress={() => navigate('DashboardScreen')}
+            onPress={() => isAuthenticated ? navigate('DashboardScreen') : navigate('LoginScreen')}
           />
         </View>
 

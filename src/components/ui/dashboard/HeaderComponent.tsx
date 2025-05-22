@@ -9,6 +9,7 @@ import Icon from '@components/global/Icon'
 import { RV } from '@unistyles/unistyles'
 import { RFValue } from 'react-native-responsive-fontsize'
 import { navigate } from '@utils/NavigationUtils'
+import { useAuth } from '@contexts/AuthContext'
 
 const HeaderComponent = () => {
 
@@ -16,8 +17,7 @@ const HeaderComponent = () => {
     const [isMenu, setIsMenu] = useState(false)
     const [lang, setLang] = useState(i18n.language || 'en')
 
-    const [isLogin, setIsLogin] = useState(true)
-    console.log(isLogin);
+    const { isAuthenticated, logout } = useAuth();
 
     const selectLanguage = (language: string): void => {
         if (lang !== language) {
@@ -75,8 +75,8 @@ const HeaderComponent = () => {
 
                     <Pressable
                         onPress={() => {
-                            navigate('FileRTIScreen', { isLogin })
-                            setIsMenu(false)
+                            // navigate('FileRTIScreen', { isLogin })
+                            // setIsMenu(false)
                         }}
                     >
                         <CustomText
@@ -89,7 +89,7 @@ const HeaderComponent = () => {
                         </CustomText>
                     </Pressable>
 
-                    {isLogin && (
+                    {isAuthenticated && (
                         <Pressable
                             onPress={() => {
                                 setIsMenu(false)
@@ -117,7 +117,7 @@ const HeaderComponent = () => {
                         }}
                     />
 
-                    {!isLogin ? (
+                    {!isAuthenticated ? (
                         <>
                             <CustomButton
                                 label="Login"
@@ -126,8 +126,8 @@ const HeaderComponent = () => {
                                 textColor={Colors.textBlue}
                                 style={{ alignSelf: 'center', marginVertical: RV(10) }}
                                 onPress={() => {
-                                    setIsLogin(true)
                                     setIsMenu(false)
+                                    navigate('LoginScreen')
                                 }}
                                 fontWeight="bold"
                             />
@@ -152,11 +152,7 @@ const HeaderComponent = () => {
                             borderColor={Colors.textBlue}
                             textColor={Colors.textBlue}
                             style={{ alignSelf: 'center', marginVertical: RV(10) }}
-                            onPress={() => {
-                                setIsLogin(false)
-                                setIsMenu(false)
-                                navigate('HomeScreen')
-                            }}
+                            onPress={logout}
                             fontWeight="bold"
                         />
                     )}

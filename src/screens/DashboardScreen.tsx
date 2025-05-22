@@ -24,7 +24,7 @@ const DashboardScreen = () => {
     <CustomSafeAreaView>
       <HeaderComponent />
       <DashboardHeader />
-      <AssistantComponent/>
+      <AssistantComponent />
 
       <ScrollView
         ref={scrollViewRef}
@@ -45,7 +45,7 @@ const DashboardScreen = () => {
             iconName='copy-outline'
             subtitle='View and track all yor submitted RTI applications.'
             align='start'
-            onViewAllPress={()=> navigate('ApplicationScreen')}
+            onViewAllPress={() => navigate('ApplicationScreen')}
             viewAlltitle='View All Applications'
           />
           <CustomDashboardUpload
@@ -56,7 +56,7 @@ const DashboardScreen = () => {
             align='start'
             iconColor={'orange'}
             arrowIconColor='orange'
-            onViewAllPress={()=>'FileRTIScreen'}
+            onViewAllPress={() => navigate('FileRTIScreen')}
             viewAlltitle='File New RTI'
           />
           <CustomDashboardUpload
