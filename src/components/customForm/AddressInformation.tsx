@@ -11,10 +11,17 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { showToast } from '@utils/ToastUtils';
+import { getRTIStepTwo } from '@api/auth';
+
+interface AddressInformationProps {
+    goToNext: (id?: string) => void;
+    goToPrev: () => void;
+    step1Id: string | null;
+}
 
 type BplType = | 'Yes' | 'No' | null;
 
-const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: () => void }) => {
+const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToPrev, step1Id }) => {
     const [addressLineOne, setAddressLineOne] = useState('');
     const [addressLineTwo, setAddressLineTwo] = useState('');
     const [state, setState] = useState('Bihar');
@@ -24,9 +31,9 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
     const [pinCode, setPinCode] = useState('');
     const [bplCard, setBplCard] = useState<BplType>(null);
     const [open, setOpen] = useState(false);
-    const [selectEducation, setSelectEducation] = useState(null);
+    const [selectEducation, setSelectEducation] = useState('');
     const [otherEducation, setOtherEducation] = useState('');
-    const [selectDistric, setSelectDistric] = useState(null);
+    const [selectDistric, setSelectDistric] = useState('');
 
     const [addressLineOneError, setAddressLineOneError] = useState(false);
     const [stateError, setStateError] = useState(false);
@@ -60,7 +67,7 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
     );
 
 
-    const onHandleNext = () => {
+    const onHandleNext = async () => {
         let isValid = true;
         let firstErrorMessage = '';
 
@@ -117,7 +124,27 @@ const AddressInformation = ({ goToNext, goToPrev }: { goToNext: () => void, goTo
             return;
         }
 
-        goToNext();
+        try {
+            const data = await getRTIStepTwo(step1Id, {
+                addressLine1: addressLineOne,
+                addressLine2: addressLineTwo,
+                state: state,
+                district: selectDistric,
+                block: block,
+                panchayat: panchayat,
+                village: village,
+                zip: pinCode,
+                education: selectEducation === 'OTH' ? otherEducation : selectEducation,
+                bpl: bplCard === 'Yes'
+            });
+
+            goToNext(data.data._id);
+            showToast(data.message, 'success');
+        } catch (err: any) {
+            console.log(err.response?.data?.message);
+            showToast(err.response?.data?.message, 'error');
+        }
+
     };
 
 

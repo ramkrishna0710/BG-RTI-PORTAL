@@ -1,33 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Icon from '@components/global/Icon'; // Assuming your custom Icon component
 import { Colors } from '@unistyles/Contstants';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { RV } from '@unistyles/unistyles';
-
-const tableData = [
-    {
-        reference: 'RTI78945613',
-        subject: 'Land Records Information',
-        department: 'Revenue Department',
-        status: 'Pending',
-        date: '4/15/2023',
-    },
-    {
-        reference: 'RTI78945613',
-        subject: 'Land Records Information',
-        department: 'Revenue Department',
-        status: 'UnderReview',
-        date: '4/15/2023',
-    },
-    {
-        reference: 'RTI78945613',
-        subject: 'Land Records Information',
-        department: 'Revenue Department',
-        status: 'Resolved',
-        date: '3/22/2023',
-    },
-];
+import { getAllRti } from '@api/auth';
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -43,10 +20,27 @@ const getStatusIcon = (status: string) => {
 };
 
 const CustomTable = () => {
+
+    const [allRTI, setAllRTI] = useState<any[]>([]);
+
+    console.log("All RTI ", allRTI);
+
+
+    useEffect(() => {
+        const fetchAllRti = async () => {
+            try {
+                const data = await getAllRti();
+                setAllRTI(data.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchAllRti();
+    }, []);
+
     return (
         <ScrollView horizontal style={styles.wrapper}>
             <View>
-                {/* Table Header */}
                 <View style={[styles.row, styles.headerRow]}>
                     <Text style={[styles.headerCell, { paddingLeft: RV(14) }]}>REFERENCE NO.</Text>
                     <Text style={styles.headerCell}>SUBJECT</Text>
@@ -56,22 +50,28 @@ const CustomTable = () => {
                     <Text style={styles.headerCell}>ACTIONS</Text>
                 </View>
 
-                {/* Table Data */}
-                {tableData.map((item, index) => (
-                    <View key={index} style={styles.row}>
-                        <Text style={[styles.cell, { paddingLeft: RV(14) }]}>{item.reference}</Text>
-                        <Text style={[styles.cell, { color: Colors.lightText }]}>{item.subject}</Text>
-                        <Text style={[styles.cell, { color: Colors.lightText }]}>{item.department}</Text>
-                        <View style={styles.statusCell}>
-                            {getStatusIcon(item.status)}
-                            <Text style={[styles.statusText, { marginLeft: 4 }]}>{item.status}</Text>
+                {allRTI.length === 0 ? (
+                    <Text style={{ padding: 10 }}>No RTI data available.</Text>
+                ) : (
+                    allRTI.slice(0, 3).map((item, index) => (
+                        <View key={index} style={styles.row}>
+                            <Text style={[styles.cell, { paddingLeft: RV(14) }]}>{item.reference_number}</Text>
+                            <Text style={[styles.cell, { color: Colors.lightText }]}>{item.subject}</Text>
+                            <Text style={[styles.cell, { color: Colors.lightText }]}>{item.department}</Text>
+                            <View style={styles.statusCell}>
+                                {getStatusIcon(item.status)}
+                                <Text style={[styles.statusText, { marginLeft: 4 }]}>{item.status}</Text>
+                            </View>
+                            <Text style={[styles.cell, { color: Colors.lightText }]}>
+                                {new Date(item.createdAt).toLocaleDateString()}
+                            </Text>
+                            <View style={[styles.cell, { paddingLeft: RV(20) }]}>
+                                <Icon name="eye-outline" iconFamily="Ionicons" size={RFValue(18)} color={Colors.textBlue} />
+                            </View>
                         </View>
-                        <Text style={[styles.cell, { color: Colors.lightText }]}>{item.date}</Text>
-                        <View style={[styles.cell, { paddingLeft: RV(20) }]}>
-                            <Icon name="eye-outline" iconFamily="Ionicons" size={RFValue(18)} color={Colors.textBlue} />
-                        </View>
-                    </View>
-                ))}
+
+                    ))
+                )}
             </View>
         </ScrollView>
     );

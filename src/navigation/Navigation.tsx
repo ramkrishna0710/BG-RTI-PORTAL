@@ -21,7 +21,7 @@ const AuthStack = () => (
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-        <Stack.Screen name="AppStack" component={AppStack} />
+        {/* <Stack.Screen name="AppStack" component={AppStack} /> */}
     </Stack.Navigator>
 );
 
@@ -33,6 +33,7 @@ const AppStack = () => (
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="ApplicationScreen" component={ApplicationScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
     </Stack.Navigator>
 );
 

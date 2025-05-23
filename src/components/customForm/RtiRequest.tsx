@@ -7,31 +7,42 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-// import DocumentPicker, { types } from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker';
 import CustomButton from '@components/ui/CustomButton';
 import { Colors } from '@unistyles/Contstants';
 import { RV } from '@unistyles/unistyles';
 import CustomText from '@components/global/CustomText';
 import { showToast } from '@utils/ToastUtils';
+import { getRTIStepThree } from '@api/auth';
+import SuccessModal from '@components/modals/SuccessModal';
+import { resetAndNavigate } from '@utils/NavigationUtils';
 
-const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: () => void }) => {
+interface RTIRequestProps {
+    goToNext: (id?: string) => void;
+    goToPrev: () => void;
+    step1Id: string | null;
+}
+
+const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
     const [subject, setSubject] = useState('');
     const [description, setDescription] = useState('');
-    const [selectDepartment, setSelectDepartment] = useState(null);
+    const [selectDepartment, setSelectDepartment] = useState('');
     const [open, setOpen] = useState(false);
 
-    const [departmetOpations, setDepartmetOpations] = useState([
+    const [departmetOpations, setDepartmetOptions] = useState([
         { label: 'Agriculture Department', value: 'PR' },
         { label: 'Education Department', value: 'SE' },
         { label: 'Health Department', value: 'HS' },
     ]);
-    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
+    const [selectedFile, setSelectedFile] = useState("document.pdf");
+
     const [departmentError, setDepartmentError] = useState(false);
     const [subjectError, setSubjectError] = useState(false);
     const [descriptionError, setDescriptionError] = useState(false);
-    const [fileError, setFileError] = useState(false);
+    const [successModal, setSuccessModal] = useState(false)
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         let isValid = true;
         let firstErrorMessage = '';
 
@@ -59,52 +70,67 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
             setDescriptionError(false);
         }
 
-        // if (selectedFile && !/\.(pdf|jpg|jpeg)$/i.test(selectedFile)) {
-        //     setFileError(true);
-        //     if (!firstErrorMessage) firstErrorMessage = 'Only PDF or JPG files are allowed';
-        //     isValid = false;
-        // } else {
-        //     setFileError(false);
-        // }
-
         if (!isValid) {
             showToast(firstErrorMessage, 'error');
             return;
         }
 
-        goToNext();
+        console.log(selectDepartment);
+        console.log(subject);
+        console.log(description);
+
+
+        try {
+            await getRTIStepThree(step1Id, {
+                department: selectDepartment,
+                subject,
+                description,
+                file: selectedFile ??  null,
+            });
+            setSuccessModal(true);
+        } catch (err: any) {
+            console.log("Error " + err.response?.data?.message);
+            showToast(err.response?.data?.message || 'Submission failed', 'error');
+        }
     };
 
     // const pickDocument = async () => {
     //     try {
-    //         const res = await DocumentPicker.pickSingle({
-    //             type: [types.pdf, types.images],
+    //         const result = await DocumentPicker.pick({
+    //             type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
     //         });
 
-    //         const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg'];
-    //         const maxSize = 2 * 1024 * 1024; // 2MB
+    //         if (result && result.length > 0) {
+    //             const file = result[0];
+    //             const fileName = file.name ?? 'Unnamed_File';
+    //             const fileType = file.type || 'application/octet-stream';
 
-    //         if (!allowedTypes.includes(res.type || '')) {
-    //             setFileError('Only PDF or JPG files are allowed.');
-    //             return;
+    //             // Check file size (2MB max)
+    //             if (file.size && file.size > 2 * 1024 * 1024) {
+    //                 showToast('File size exceeds 2MB limit', 'error');
+    //                 return;
+    //             }
+
+    //             setSelectedFile({
+    //                 uri: file.uri,
+    //                 name: fileName,
+    //                 type: fileType,
+    //             });
+    //             showToast('File selected successfully', 'success');
     //         }
-
-    //         if (res.size && res.size > maxSize) {
-    //             setFileError('File size should not exceed 2MB.');
-    //             return;
+    //     } catch (err: any) {
+    //         if (DocumentPicker.isCancel(err)) {
+    //             console.log('User cancelled document picker');
+    //             showToast('File selection cancelled', 'success');
+    //         } else {
+    //             console.error('Document picker error: ', err);
+    //             showToast('Failed to select file', 'error');
     //         }
-
-    //         setSelectedFile(res.name);
-    //         setFileError(null);
-    //     } catch (err) {
-    //         if (DocumentPicker.isCancel(err)) return;
-    //         console.warn('Error picking document:', err);
     //     }
     // };
 
     return (
         <View style={styles.container}>
-
             <View style={styles.fieldContainer}>
                 <Text style={[styles.label, { color: departmentError ? Colors.red : Colors.lightText }]}>
                     Department <Text style={styles.required}>*</Text>
@@ -115,7 +141,7 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                     items={departmetOpations}
                     setOpen={setOpen}
                     setValue={setSelectDepartment}
-                    setItems={setDepartmetOpations}
+                    setItems={setDepartmetOptions}
                     placeholder="Select Department"
                     style={[styles.input, departmentError && { borderColor: Colors.red }]}
                     dropDownContainerStyle={{ borderColor: '#ccc' }}
@@ -139,7 +165,7 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                     Description <Text style={styles.required}>*</Text>
                 </Text>
                 <TextInput
-                    style={[styles.input, subjectError && { borderColor: Colors.red }, styles.textArea]}
+                    style={[styles.input, descriptionError && { borderColor: Colors.red }, styles.textArea]}
                     value={description}
                     onChangeText={setDescription}
                     multiline
@@ -151,19 +177,22 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
 
             <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Upload Supporting Document</Text>
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
-                    gap: RV(11),
-                }}>
+                <View style={styles.uploadRow}>
                     <TouchableOpacity style={styles.uploadBtn} onPress={() => { }}>
                         <Text style={styles.uploadText}>Choose File</Text>
                     </TouchableOpacity>
-                    <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.lightText}>No file chosen</CustomText>
+                    <CustomText fontFamily="Okra-Regular" fontSize={RV(12)} color={Colors.lightText}>
+                        No file chosen
+                    </CustomText>
                 </View>
-                {selectedFile && <Text style={styles.selectedFile}>{selectedFile}</Text>}
-                <CustomText fontFamily='Okra-Regular' fontSize={RV(9)} color={Colors.lightText} style={{ marginTop: RV(2) }}>Allowed file types: PDF, JPG (Max size:2MB)</CustomText>
+                <CustomText
+                    fontFamily="Okra-Regular"
+                    fontSize={RV(9)}
+                    color={Colors.lightText}
+                    style={{ marginTop: RV(2) }}
+                >
+                    Allowed file types: PDF, JPG (Max size: 2MB)
+                </CustomText>
             </View>
 
             <View style={styles.buttonRow}>
@@ -182,23 +211,31 @@ const RtiRequest = ({ goToNext, goToPrev }: { goToNext: () => void, goToPrev: ()
                     onPress={goToPrev}
                     borderColor={Colors.textBlue}
                 />
-
                 <CustomButton
                     label="Submit Application"
                     fontWeight="bold"
-                    fontSize={RV(13)}
+                    fontSize={RV(11)}
                     textColor={Colors.background}
                     bgColor={Colors.textBlue}
                     width="44%"
                     showIcon
                     iconName="send"
                     iconFamily="MaterialIcons"
-                    iconSize={RV(20)}
+                    iconSize={RV(16)}
                     iconColor={Colors.background}
-                    onPress={goToNext}
+                    onPress={onSubmit}
                     borderColor={Colors.textBlue}
                 />
             </View>
+
+            <SuccessModal
+                visible={successModal}
+                onClose={() => {
+                    setSuccessModal(false)
+                    resetAndNavigate('DashboardScreen')
+                }}
+            />
+
         </View>
     );
 };
@@ -238,6 +275,11 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#999',
     },
+    uploadRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: RV(11),
+    },
     uploadBtn: {
         borderRadius: 6,
         paddingVertical: 10,
@@ -248,11 +290,6 @@ const styles = StyleSheet.create({
     uploadText: {
         fontSize: 14,
         color: Colors.textBlue,
-    },
-    selectedFile: {
-        marginTop: 6,
-        fontSize: 13,
-        color: '#555',
     },
     buttonRow: {
         flexDirection: 'row',

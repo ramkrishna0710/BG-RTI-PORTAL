@@ -94,7 +94,7 @@ export default AssistantComponent
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        bottom: RV(24),
+        bottom: RV(36),
         right: RV(16),
         height: RV(48),
         width: RV(48),

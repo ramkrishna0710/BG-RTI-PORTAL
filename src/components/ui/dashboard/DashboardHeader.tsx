@@ -22,10 +22,7 @@ const DashboardHeader = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  console.log("Profile ", profile);
-
-
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {

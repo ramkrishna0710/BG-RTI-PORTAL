@@ -1,3 +1,4 @@
+import { getRTIStepOne } from '@api/auth';
 import CustomText from '@components/global/CustomText';
 import Icon from '@components/global/Icon';
 import CustomButton from '@components/ui/CustomButton';
@@ -17,7 +18,7 @@ import {
 
 type GenderType = 'Male' | 'Female' | 'Other' | null;
 
-const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
+const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) => {
   const [fullName, setFullName] = useState('');
   const [gender, setGender] = useState<GenderType>(null);
   const [mobileNumber, setMobileNumber] = useState('');
@@ -29,6 +30,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
   const [mobileNumberError, setMobileNumberError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [aadhaarError, setAadhaarError] = useState(false);
+
 
   const onHandleNext = async () => {
     let isValid = true;
@@ -79,9 +81,14 @@ const ApplicantInformation = ({ goToNext }: { goToNext: () => void }) => {
       return;
     }
 
-    // If valid
-    goToNext();
-
+    try {
+      const data = await getRTIStepOne(fullName, gender!.toLowerCase(), mobileNumber, emailAddress, aadhaarNumber);
+      goToNext(data.data._id);
+      showToast(data.message, 'success');
+    } catch (err: any) {
+      console.log(err.response?.data?.message);
+      showToast(err.response?.data?.message, 'error');
+    }
   }
 
 
