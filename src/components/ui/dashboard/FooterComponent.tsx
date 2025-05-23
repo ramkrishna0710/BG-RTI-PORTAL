@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import React from 'react'
 import { Colors, screenWidth } from '@unistyles/Contstants'
 import CustomText from '@components/global/CustomText'
@@ -8,9 +8,10 @@ import Icon from '@components/global/Icon'
 const FooterComponent = () => {
     return (
         <View style={{ backgroundColor: Colors.background3, justifyContent: 'flex-start', width: screenWidth, paddingVertical: RV(18), paddingHorizontal: RV(14) }}>
-            <CustomText fontSize={RV(12)} color="#fff">
-                #Bihar Govt. logo
-            </CustomText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 5 }}>
+                <Image source={require('@assets/images/footlogo.png')} style={{ height: RV(30), width: RV(30) }} />
+                <CustomText fontFamily='Okra-Medium' fontSize={RV(12)} color={Colors.background}>JAANKARI Facilitation Centre</CustomText>
+            </View>
 
             <CustomText fontFamily='Okra-Regular' fontSize={RV(12)} color={Colors.lightText} style={{ marginTop: RV(20) }}>
                 Access information under the Right to Information Act, 2005

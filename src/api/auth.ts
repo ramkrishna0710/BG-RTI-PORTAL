@@ -76,11 +76,6 @@ export const getRTIStepThree = async (
 ) => {
     // const { file, ...rest } = data;
     // const payload = file ? data : rest;
-
-    console.log("Data in API ID ", step1Id);
-    console.log("Data in API ", data);
-
-
     const res = await axios.patch(`/rti/step3/${step1Id}`, data);
     return res.data;
 };

@@ -23,9 +23,6 @@ const CustomTable = () => {
 
     const [allRTI, setAllRTI] = useState<any[]>([]);
 
-    console.log("All RTI ", allRTI);
-
-
     useEffect(() => {
         const fetchAllRti = async () => {
             try {

@@ -75,11 +75,6 @@ const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
             return;
         }
 
-        console.log(selectDepartment);
-        console.log(subject);
-        console.log(description);
-
-
         try {
             await getRTIStepThree(step1Id, {
                 department: selectDepartment,

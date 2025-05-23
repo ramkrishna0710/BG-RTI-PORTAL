@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { RV } from '@unistyles/unistyles'
@@ -8,6 +8,7 @@ import CustomText from '@components/global/CustomText'
 import { navigate } from '@utils/NavigationUtils'
 import { useAuth } from '@contexts/AuthContext'
 import { getProfile } from '@api/auth'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 interface Profile {
   fullname: string;
@@ -22,7 +23,7 @@ const DashboardHeader = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -69,7 +70,11 @@ const DashboardHeader = () => {
           </View>
         </View>
         <TouchableOpacity onPress={() => setIsMenu(prev => !prev)}>
-          <Icon iconFamily="Ionicons" name="options-outline" size={RV(26)} />
+          <Icon iconFamily="MaterialCommunityIcons" name="menu-open" size={RV(26)} />
+          {/* <Image
+            source={require('@assets/images/rtmenuicon.png')}
+            style={{ height: RV(20), width: RV(20) }}
+          /> */}
         </TouchableOpacity>
       </View>
 
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderColor: Colors.lightText,
     paddingBottom: RV(10),
-    paddingHorizontal: RV(16),
+    paddingHorizontal: RV(12),
   },
   userInfoContainer: {
     flexDirection: 'row',

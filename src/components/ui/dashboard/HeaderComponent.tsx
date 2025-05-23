@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Image, Platform } from 'react-native'
 import React, { useState } from 'react'
 import i18n from '../../../locales/i18n'
 import CustomButton from '../CustomButton'
@@ -30,7 +30,17 @@ const HeaderComponent = () => {
     return (
         <>
             <View style={styles.headerContainer}>
-                <Text>#logo</Text>
+                {Platform.OS === 'android' ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                        <Image source={require('@assets/images/footlogo.png')} style={{ height: RV(30), width: RV(30) }} />
+                        <CustomText fontFamily='Okra-Medium' fontSize={RV(12)}>JAANKARI Facilitation Centre</CustomText>
+                    </View>
+                ) : (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                        <Icon iconFamily='MaterialCommunityIcons' name='arrow-left' size={RV(22)}/>
+                        <Image source={require('@assets/images/footlogo.png')} style={{ height: RV(30), width: RV(30) }} />
+                    </View>
+                )}
                 {/* Image/logo can go here */}
                 <View style={styles.headerMenuContainer}>
                     <Pressable onPress={() => setVisible(true)}>
