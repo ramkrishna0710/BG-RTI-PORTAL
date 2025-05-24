@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, TouchableOpacity, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView';
 import HeaderComponent from '@components/ui/dashboard/HeaderComponent';
 import FooterComponent from '@components/ui/dashboard/FooterComponent';
@@ -10,10 +10,32 @@ import ApplicantInformation from '@components/customForm/ApplicantInformation';
 import AddressInformation from '@components/customForm/AddressInformation';
 import useKeyboardOffsetHeight from '@utils/useKeyboardOffsetHeight';
 import RtiRequest from '@components/customForm/RtiRequest';
-import Login from '@components/ui/Login';
-import { RouteProp } from '@react-navigation/native';
 import AssistantComponent from '@components/ui/AssistantComponent';
 import Icon from '@components/global/Icon';
+
+type GenderType = 'Male' | 'Female' | 'Other' | null;
+
+interface ApplicantData {
+    fullName: string;
+    gender: GenderType;
+    mobileNumber: string;
+    emailAddress: string;
+    aadhaarNumber: string;
+}
+
+interface AddressData {
+    addressLineOne: string;
+    addressLineTwo: string;
+    state: string;
+    district: string;
+    block: string;
+    panchayat: string;
+    village: string;
+    pinCode: string;
+    education: string;
+    otherEducation: string;
+    bplCard: 'Yes' | 'No' | null;
+}
 
 
 const FileRTIScreen = () => {
@@ -27,6 +49,29 @@ const FileRTIScreen = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [rtiApplicationId, setRtiApplicationId] = useState<string | null>(null);
     const keyboardOffset = useKeyboardOffsetHeight();
+
+    const [applicantData, setApplicantData] = useState<ApplicantData>({
+        fullName: '',
+        gender: null,
+        mobileNumber: '',
+        emailAddress: '',
+        aadhaarNumber: '',
+    });
+
+    const [addressData, setAddressData] = useState<AddressData>({
+        addressLineOne: '',
+        addressLineTwo: '',
+        state: 'Bihar',
+        district: '',
+        block: '',
+        panchayat: '',
+        village: '',
+        pinCode: '',
+        education: '',
+        otherEducation: '',
+        bplCard: null,
+    });
+
 
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -55,12 +100,22 @@ const FileRTIScreen = () => {
         switch (activeIndex) {
             case 0:
                 return <View style={{ flex: 1 }}>
-                    <ApplicantInformation goToNext={goToNext} />
+                    <ApplicantInformation
+                        goToNext={goToNext}
+                        data={applicantData}
+                        setData={setApplicantData}
+                    />
                 </View>
 
             case 1:
                 return <View style={{ flex: 1 }}>
-                    <AddressInformation goToPrev={goToPrev} goToNext={goToNext} step1Id={rtiApplicationId ?? ''} />
+                    <AddressInformation
+                        goToPrev={goToPrev}
+                        goToNext={goToNext}
+                        step1Id={rtiApplicationId ?? ''}
+                        addressData={addressData}
+                        setAddressData={setAddressData}
+                    />
                 </View>
             case 2:
                 return <View style={{ flex: 1 }}>
@@ -110,42 +165,6 @@ const FileRTIScreen = () => {
                             </CustomText>
                         </View>
                         <View style={{ flexDirection: 'row', marginTop: RV(10), justifyContent: 'space-evenly', alignItems: 'center' }}>
-                            {/* {items.map((item, index) => (
-                                <Pressable
-                                    key={item.value}
-                                    onPress={() => goToIndex(index)}
-                                    style={{ alignItems: 'center', maxWidth: RV(100), flexDirection: 'column' }}
-                                >
-                                    <View
-                                        style={{
-                                            height: RV(40),
-                                            width: RV(40),
-                                            borderRadius: RV(20),
-                                            backgroundColor: activeIndex === index ? Colors.textBlue : '#cacacc',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            marginBottom: RV(4),
-                                        }}
-                                    >
-                                        <CustomText
-                                            fontFamily="Okra-Bold"
-                                            color={activeIndex === index ? Colors.background : '#606061'}
-                                        >
-                                            {item.value}
-                                        </CustomText>
-                                        
-                                    </View>
-
-                                    <CustomText
-                                        color={Colors.text}
-                                        fontFamily='Okra-Regular'
-                                        fontSize={RV(9)}
-                                        style={{ textAlign: 'center' }}
-                                    >
-                                        {item.label}
-                                    </CustomText>
-                                </Pressable>
-                            ))} */}
 
                             {items.map((item, index) => (
                                 <Pressable

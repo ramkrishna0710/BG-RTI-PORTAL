@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, TouchableOpacity, ScrollView, Text } from 'react-native'
+import { StyleSheet, TextInput, View, TouchableOpacity, ScrollView, Text, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView'
 import CustomText from '@components/global/CustomText'
@@ -29,6 +29,7 @@ const RegisterScreen = () => {
     const [mobileNumberError, setMobileNumberError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [confrimPasswordError, setConfrimPasswordError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
 
     const { login } = useAuth();
 
@@ -83,11 +84,14 @@ const RegisterScreen = () => {
         }
 
         try {
+            setIsLoading(true)
             const data = await registerUser(name, email, mobileNumber, password);
             await login(data.token);
             showToast(data.message, 'success');
         } catch (err: any) {
             showToast(err.response?.data?.message, 'error');
+        } finally {
+            setIsLoading(false)
         }
     };
 
@@ -225,7 +229,7 @@ const RegisterScreen = () => {
                     <View style={{ height: RV(20) }} />
 
                     <CustomButton
-                        label='Register'
+                        label={isLoading ? <ActivityIndicator size={'small'} color={Colors.background} /> : 'Register'}
                         bgColor={Colors.textBlue}
                         borderColor={Colors.textBlue}
                         textColor={Colors.background}

@@ -20,16 +20,9 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
+    const [isLaoding, setIsLoading] = useState(false)
 
-    const { login, loading } = useAuth();
-
-    if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-                <ActivityIndicator color={'white'} size={'large'} />
-            </View>
-        );
-    }
+    const { login } = useAuth();
 
     const onHandleLogin = async () => {
         let isValid = true;
@@ -58,12 +51,16 @@ const Login = () => {
         }
 
         try {
+            setIsLoading(true)
             const data = await loginUser(email, password, rememberMe);
             await login(data.token);
             showToast(data.message, 'success');
         } catch (err: any) {
             console.log(err.response?.data?.message);
             showToast(err.response?.data?.message, 'error');
+        }
+        finally {
+            setIsLoading(false)
         }
     }
 
@@ -163,7 +160,7 @@ const Login = () => {
                 </View>
 
                 <CustomButton
-                    label='Login'
+                    label={isLaoding ? <ActivityIndicator size={'small'} color={Colors.background} /> : 'Login'}
                     bgColor={Colors.textBlue}
                     borderColor={Colors.textBlue}
                     textColor={Colors.background}

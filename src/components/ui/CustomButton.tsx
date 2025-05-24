@@ -1,5 +1,4 @@
 import Icon from '@components/global/Icon';
-import { RV } from '@unistyles/unistyles';
 import React from 'react';
 import {
   TouchableOpacity,
@@ -10,7 +9,7 @@ import {
 } from 'react-native';
 
 interface CustomButtonProps {
-  label: string;
+  label: React.ReactNode; // Changed from string to React.ReactNode
   onPress: () => void;
   bgColor?: string;
   textColor?: string;
@@ -44,12 +43,12 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   width,
   fontSize,
   showIcon: showRightIcon = false,
-  showLeftIcon: showLeftIcon = false,
+  showLeftIcon = false,
   iconName = 'arrow_forward',
   iconFamily = 'MaterialIcons',
   iconSize = 22,
   iconColor = '#003366',
-  fontWeight: fontWeight,
+  fontWeight,
   style
 }) => {
   const buttonStyle: ViewStyle = {
@@ -65,7 +64,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     width: width,
     marginVertical: marginVertical,
     marginHorizontal: marginHorizontal,
-    gap: RV(5),
+    gap: 5,  // assuming RV(5) is 5 here; replace accordingly
     ...style
   };
 
@@ -86,7 +85,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           color={iconColor}
         />
       )}
-      <Text style={combinedTextStyle}>{label}</Text>
+
+      {typeof label === 'string' ? (
+        <Text style={combinedTextStyle}>{label}</Text>
+      ) : (
+        label
+      )}
+
       {showRightIcon && (
         <Icon
           name={iconName}

@@ -10,7 +10,7 @@
     "test": "jest",
     "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install",
     "postinstall": "npx parch-package",
-    "generate-apk": "cd android && ./gradlew assembleRelease",
+    "generate-apk": "cd android && gradlew.bat assembleRelease",
     "clean-rebuild": "cd android && gradlew.bat clean && cd .."
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "axios": "^1.9.0",
     "i18next": "^25.2.0",
     "i18next-react-native-language-detector": "^1.0.2",
+    "lottie-react-native": "^7.2.2",
     "react": "19.0.0",
     "react-i18next": "^15.5.1",
     "react-native": "0.79.2",

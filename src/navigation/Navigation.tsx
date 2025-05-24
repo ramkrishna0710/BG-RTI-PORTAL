@@ -12,15 +12,15 @@ import SettingsScreen from '@screens/SettingsScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import ApplicationScreen from '@screens/ApplicationScreen';
 import { useAuth } from '@contexts/AuthContext';
-import { ActivityIndicator, View } from 'react-native';
+import Splash from '@components/splash/Splash';
 
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen options={{ animation: 'fade' }}  name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen options={{ animation: 'fade' }}  name="RegisterScreen" component={RegisterScreen} />
         {/* <Stack.Screen name="AppStack" component={AppStack} /> */}
     </Stack.Navigator>
 );
@@ -41,11 +41,7 @@ const Navigation = () => {
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-                <ActivityIndicator color={'white'} size={'large'} />
-            </View>
-        );
+        return <Splash/>;
     }
 
     return (

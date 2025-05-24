@@ -13,27 +13,46 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { showToast } from '@utils/ToastUtils';
 import { getRTIStepTwo } from '@api/auth';
 
-interface AddressInformationProps {
-    goToNext: (id?: string) => void;
-    goToPrev: () => void;
-    step1Id: string | null;
+interface AddressData {
+    addressLineOne: string;
+    addressLineTwo: string;
+    state: string;
+    district: string;
+    block: string;
+    panchayat: string;
+    village: string;
+    pinCode: string;
+    education: string;
+    otherEducation: string;
+    bplCard: 'Yes' | 'No' | null;
 }
+interface AddressInformationProps {
+    goToNext: (id: string) => void;
+    goToPrev: () => void;
+    step1Id: string;
+    addressData: AddressData;
+    setAddressData: React.Dispatch<React.SetStateAction<AddressData>>;
+}
+
 
 type BplType = | 'Yes' | 'No' | null;
 
-const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToPrev, step1Id }) => {
-    const [addressLineOne, setAddressLineOne] = useState('');
-    const [addressLineTwo, setAddressLineTwo] = useState('');
-    const [state, setState] = useState('Bihar');
-    const [block, setBlock] = useState('');
-    const [panchayat, setPanchayat] = useState('');
-    const [village, setVillage] = useState('');
-    const [pinCode, setPinCode] = useState('');
-    const [bplCard, setBplCard] = useState<BplType>(null);
-    const [open, setOpen] = useState(false);
-    const [selectEducation, setSelectEducation] = useState('');
-    const [otherEducation, setOtherEducation] = useState('');
-    const [selectDistric, setSelectDistric] = useState('');
+const AddressInformation: React.FC<AddressInformationProps> = ({ addressData, setAddressData, goToNext, goToPrev, step1Id }) => {
+    // const [addressLineOne, setAddressLineOne] = useState('');
+    // const [addressLineTwo, setAddressLineTwo] = useState('');
+    // const [state, setState] = useState('Bihar');
+    // const [block, setBlock] = useState('');
+    // const [panchayat, setPanchayat] = useState('');
+    // const [village, setVillage] = useState('');
+    // const [pinCode, setPinCode] = useState('');
+    // const [bplCard, setBplCard] = useState<BplType>(null);
+    // const [open, setOpen] = useState(false);
+    // const [selectEducation, setSelectEducation] = useState('');
+    // const [otherEducation, setOtherEducation] = useState('');
+    // const [selectDistric, setSelectDistric] = useState('');
+
+    const [openDistrict, setOpenDistrict] = useState(false);
+    const [openEducation, setOpenEducation] = useState(false);
 
     const [addressLineOneError, setAddressLineOneError] = useState(false);
     const [stateError, setStateError] = useState(false);
@@ -71,7 +90,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
         let isValid = true;
         let firstErrorMessage = '';
 
-        if (!addressLineOne.trim()) {
+        if (!addressData.addressLineOne.trim()) {
             setAddressLineOneError(true);
             if (!firstErrorMessage) firstErrorMessage = 'Address Line 1 is required';
             isValid = false;
@@ -79,7 +98,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
             setAddressLineOneError(false);
         }
 
-        if (!state.trim()) {
+        if (!addressData.state.trim()) {
             setStateError(true);
             if (!firstErrorMessage) firstErrorMessage = 'State is required';
             isValid = false;
@@ -87,7 +106,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
             setStateError(false);
         }
 
-        if (!selectDistric) {
+        if (!addressData.district) {
             setDistrictError(true);
             if (!firstErrorMessage) firstErrorMessage = 'District must be selected';
             isValid = false;
@@ -95,7 +114,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
             setDistrictError(false);
         }
 
-        if (!block.trim()) {
+        if (!addressData.block.trim()) {
             setBlockError(true);
             if (!firstErrorMessage) firstErrorMessage = 'Block is required';
             isValid = false;
@@ -103,7 +122,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
             setBlockError(false);
         }
 
-        if (!pinCode.trim() || pinCode.length !== 6) {
+        if (!addressData.pinCode.trim() || addressData.pinCode.length !== 6) {
             setPinCodeError(true);
             if (!firstErrorMessage) firstErrorMessage = 'Enter a valid 6-digit PIN Code';
             isValid = false;
@@ -111,7 +130,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
             setPinCodeError(false);
         }
 
-        if (!selectEducation) {
+        if (!addressData.education) {
             setEducationError(true);
             if (!firstErrorMessage) firstErrorMessage = 'Education must be selected';
             isValid = false;
@@ -126,16 +145,16 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
 
         try {
             const data = await getRTIStepTwo(step1Id, {
-                addressLine1: addressLineOne,
-                addressLine2: addressLineTwo,
-                state: state,
-                district: selectDistric,
-                block: block,
-                panchayat: panchayat,
-                village: village,
-                zip: pinCode,
-                education: selectEducation === 'OTH' ? otherEducation : selectEducation,
-                bpl: bplCard === 'Yes'
+                addressLine1: addressData.addressLineOne,
+                addressLine2: addressData.addressLineTwo,
+                state: addressData.state,
+                district: addressData.district,
+                block: addressData.block,
+                panchayat: addressData.panchayat,
+                village: addressData.village,
+                zip: addressData.pinCode,
+                education: addressData.education === 'OTH' ? addressData.otherEducation : addressData.education,
+                bpl: addressData.bplCard === 'Yes'
             });
 
             goToNext(data.data._id);
@@ -157,9 +176,9 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={[styles.input, addressLineOneError && { borderColor: Colors.red }]}
-                    value={addressLineOne}
+                    value={addressData.addressLineOne}
                     onChangeText={(text) => {
-                        setAddressLineOne(text);
+                        setAddressData(prev => ({ ...prev, addressLineOne: text }));
                         if (addressLineOneError) setAddressLineOneError(false);
                     }}
                 />
@@ -171,8 +190,8 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={addressLineTwo}
-                    onChangeText={setAddressLineTwo}
+                    value={addressData.addressLineTwo}
+                    onChangeText={(text) => setAddressData(prev => ({ ...prev, addressLineTwo: text }))}
                 />
             </View>
 
@@ -182,12 +201,12 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={[styles.input, stateError && { borderColor: Colors.red }]}
-                    value={state}
+                    value={addressData.state}
                     editable={false}
-                    onChangeText={(text) => {
-                        setState(text);
-                        if (stateError) setStateError(false);
-                    }}
+                // onChangeText={(text) => {
+                //     setState(text);
+                //     if (stateError) setStateError(false);
+                // }}
                 />
             </View>
 
@@ -196,11 +215,11 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                     Distric <Text style={styles.required}>*</Text>
                 </Text>
                 <DropDownPicker
-                    open={open}
-                    value={selectDistric}
+                    open={openDistrict}
+                    value={addressData.district}
                     items={districOptions}
-                    setOpen={setOpen}
-                    setValue={setSelectDistric}
+                    setOpen={setOpenDistrict}
+                    setValue={(cb) => setAddressData(prev => ({ ...prev, district: cb(prev.district) }))}
                     setItems={setDistricOptions}
                     placeholder="Select District"
                     style={[styles.input, districtError && { borderColor: Colors.red }]}
@@ -215,8 +234,8 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={[styles.input, blockError && { borderColor: Colors.red }]}
-                    value={block}
-                    onChangeText={setBlock}
+                    value={addressData.block}
+                    onChangeText={(text) => setAddressData(prev => ({ ...prev, block: text }))}
                 />
             </View>
 
@@ -226,8 +245,8 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={panchayat}
-                    onChangeText={setPanchayat}
+                    value={addressData.panchayat}
+                    onChangeText={(text) => setAddressData(prev => ({ ...prev, panchayat: text }))}
                 />
             </View>
 
@@ -237,8 +256,8 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={styles.input}
-                    value={village}
-                    onChangeText={setVillage}
+                    value={addressData.village}
+                    onChangeText={(text) => setAddressData(prev => ({ ...prev, village: text }))}
                 />
             </View>
 
@@ -248,9 +267,9 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                 </Text>
                 <TextInput
                     style={[styles.input, pinCodeError && { borderColor: Colors.red }]}
-                    value={pinCode}
+                    value={addressData.pinCode}
                     onChangeText={(text) => {
-                        setPinCode(text);
+                        setAddressData(prev => ({ ...prev, pinCode: text }));
                         if (pinCodeError) setPinCodeError(false);
                     }}
                     placeholder="6-digit PIN code"
@@ -265,11 +284,11 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                     Education <Text style={styles.required}>*</Text>
                 </Text>
                 <DropDownPicker
-                    open={open}
-                    value={selectEducation}
+                    open={openEducation}
+                    value={addressData.education}
                     items={educationOptions}
-                    setOpen={setOpen}
-                    setValue={setSelectEducation}
+                    setOpen={setOpenEducation}
+                    setValue={(cb) => setAddressData(prev => ({ ...prev, education: cb(prev.education) }))}
                     setItems={setEducationOptions}
                     placeholder="Select your education"
                     style={[styles.input, educationError && { borderColor: Colors.red }]}
@@ -277,7 +296,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                     listMode='SCROLLVIEW'
                 />
             </View>
-            {selectEducation === 'OTH' && (
+            {addressData.education === 'OTH' && (
                 <View style={[styles.fieldContainer, { marginTop: -15 }]}>
                     <Text style={styles.label}>
                         Specify Other Education
@@ -285,8 +304,8 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                     <TextInput
                         style={styles.input}
                         placeholder="Enter other education"
-                        value={otherEducation}
-                        onChangeText={setOtherEducation}
+                        value={addressData.otherEducation}
+                        onChangeText={(text) => setAddressData(prev => ({ ...prev, otherEducation: text }))}
                     />
                 </View>
             )}
@@ -301,10 +320,10 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ goToNext, goToP
                         <TouchableOpacity
                             key={g}
                             style={styles.radioOption}
-                            onPress={() => setBplCard(g as BplType)}
+                            onPress={() => setAddressData(prev => ({ ...prev, bplCard: g as BplType }))}
                             activeOpacity={0.8}
                         >
-                            <RadioButton selected={bplCard === g} />
+                            <RadioButton selected={addressData.bplCard === g} />
                             <Text style={styles.radioLabel}>{g}</Text>
                         </TouchableOpacity>
                     ))}

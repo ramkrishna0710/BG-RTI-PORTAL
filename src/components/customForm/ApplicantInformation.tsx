@@ -18,12 +18,27 @@ import {
 
 type GenderType = 'Male' | 'Female' | 'Other' | null;
 
-const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) => {
-  const [fullName, setFullName] = useState('');
-  const [gender, setGender] = useState<GenderType>(null);
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [aadhaarNumber, setAadhaarNumber] = useState('');
+interface ApplicantData {
+  fullName: string;
+  gender: GenderType;
+  mobileNumber: string;
+  emailAddress: string;
+  aadhaarNumber: string;
+}
+
+interface Props {
+  data: ApplicantData;
+  setData: React.Dispatch<React.SetStateAction<ApplicantData>>;
+  goToNext: (id: string) => void;
+}
+
+const ApplicantInformation = ({ data, setData, goToNext }: Props) => {
+
+  // const [fullName, setFullName] = useState('');
+  // const [gender, setGender] = useState<GenderType>(null);
+  // const [mobileNumber, setMobileNumber] = useState('');
+  // const [emailAddress, setEmailAddress] = useState('');
+  // const [aadhaarNumber, setAadhaarNumber] = useState('');
 
   const [fullNameError, setFullNameError] = useState(false);
   const [genderError, setGenderError] = useState(false);
@@ -36,7 +51,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
     let isValid = true;
     let firstErrorMessage = '';
 
-    if (!isNameValid(fullName)) {
+    if (!isNameValid(data.fullName)) {
       setFullNameError(true);
       if (!firstErrorMessage) firstErrorMessage = 'Full name must be at least 2 characters long';
       isValid = false;
@@ -44,7 +59,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
       setFullNameError(false);
     }
 
-    if (!gender) {
+    if (!data.gender) {
       setGenderError(true);
       if (!firstErrorMessage) firstErrorMessage = 'Gender must be selected';
       isValid = false;
@@ -52,7 +67,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
       setGenderError(false);
     }
 
-    if (!isMobileNumberValid(mobileNumber)) {
+    if (!isMobileNumberValid(data.mobileNumber)) {
       setMobileNumberError(true);
       if (!firstErrorMessage) firstErrorMessage = 'Enter a valid 10-digit mobile number';
       isValid = false;
@@ -60,7 +75,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
       setMobileNumberError(false);
     }
 
-    if (!isEmailValid(emailAddress)) {
+    if (!isEmailValid(data.emailAddress)) {
       setEmailError(true);
       if (!firstErrorMessage) firstErrorMessage = 'Please enter a valid email address';
       isValid = false;
@@ -68,7 +83,7 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
       setEmailError(false);
     }
 
-    if (aadhaarNumber && !isAadhaarValid(aadhaarNumber)) {
+    if (data.aadhaarNumber && !isAadhaarValid(data.aadhaarNumber)) {
       setAadhaarError(true);
       if (!firstErrorMessage) firstErrorMessage = 'Aadhaar must be a 12-digit number';
       isValid = false;
@@ -82,9 +97,9 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
     }
 
     try {
-      const data = await getRTIStepOne(fullName, gender!.toLowerCase(), mobileNumber, emailAddress, aadhaarNumber);
-      goToNext(data.data._id);
-      showToast(data.message, 'success');
+      const res = await getRTIStepOne(data.fullName, data.gender!.toLowerCase(), data.mobileNumber, data.emailAddress, data.aadhaarNumber);
+      goToNext(res.data._id);
+      showToast(res.message, 'success');
     } catch (err: any) {
       console.log(err.response?.data?.message);
       showToast(err.response?.data?.message, 'error');
@@ -107,9 +122,9 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
         </Text>
         <TextInput
           style={[styles.input, fullNameError && { borderColor: Colors.red }]}
-          value={fullName}
+          value={data.fullName}
           onChangeText={(text) => {
-            setFullName(text);
+            setData((prev) => ({ ...prev, fullName: text }));
             if (fullNameError) setFullNameError(false);
           }}
           placeholder="Enter your full name"
@@ -127,12 +142,12 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
               key={g}
               style={styles.radioOption}
               onPress={() => {
-                setGender(g as GenderType)
+                setData((prev) => ({ ...prev, gender: g as GenderType }));
                 if (genderError) setGenderError(false)
               }}
               activeOpacity={0.8}
             >
-              <RadioButton selected={gender === g} />
+              <RadioButton selected={data.gender === g} />
               <Text style={styles.radioLabel}>{g}</Text>
             </TouchableOpacity>
           ))}
@@ -145,9 +160,9 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
         </Text>
         <TextInput
           style={[styles.input, emailError && { borderColor: Colors.red }]}
-          value={mobileNumber}
+          value={data.mobileNumber}
           onChangeText={(text) => {
-            setMobileNumber(text);
+            setData((prev) => ({ ...prev, mobileNumber: text }));
             if (mobileNumberError) setMobileNumberError(false);
           }}
           placeholder="10-digit mobile number"
@@ -163,9 +178,9 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
         </Text>
         <TextInput
           style={[styles.input, emailError && { borderColor: Colors.red }]}
-          value={emailAddress}
+          value={data.emailAddress}
           onChangeText={(text) => {
-            setEmailAddress(text);
+            setData((prev) => ({ ...prev, emailAddress: text }));
             if (emailError) setEmailError(false);
           }}
           placeholder="example@domain.com"
@@ -179,9 +194,9 @@ const ApplicantInformation = ({ goToNext }: { goToNext: (id: string) => void }) 
         <Text style={styles.label}>Aadhaar Number (Optional)</Text>
         <TextInput
           style={[styles.input, aadhaarError && { borderColor: Colors.red }]}
-          value={aadhaarNumber}
+          value={data.aadhaarNumber}
           onChangeText={(text) => {
-            setAadhaarNumber(text);
+            setData((prev) => ({ ...prev, aadhaarNumber: text }));
             if (aadhaarError) setAadhaarError(false);
           }} placeholder="12-digit Aadhaar number"
           keyboardType="number-pad"

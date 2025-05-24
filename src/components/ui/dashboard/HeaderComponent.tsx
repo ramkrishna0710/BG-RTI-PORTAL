@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, Image, Platform } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Image, Platform, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import i18n from '../../../locales/i18n'
 import CustomButton from '../CustomButton'
@@ -15,9 +15,19 @@ const HeaderComponent = () => {
 
     const [visible, setVisible] = useState(false)
     const [isMenu, setIsMenu] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [lang, setLang] = useState(i18n.language || 'en')
 
     const { isAuthenticated, logout } = useAuth();
+
+    const handleLogout = () => {
+        setIsLoading(true);
+        setTimeout(() => {
+            logout();
+            setIsLoading(false);
+            setIsMenu(false);
+        }, 2000);
+    }
 
     const selectLanguage = (language: string): void => {
         if (lang !== language) {
@@ -37,11 +47,11 @@ const HeaderComponent = () => {
                     </View>
                 ) : (
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <Icon iconFamily='MaterialCommunityIcons' name='arrow-left' size={RV(22)}/>
+                        <Icon iconFamily='MaterialCommunityIcons' name='arrow-left' size={RV(22)} />
                         <Image source={require('@assets/images/footlogo.png')} style={{ height: RV(30), width: RV(30) }} />
                     </View>
                 )}
-                {/* Image/logo can go here */}
+
                 <View style={styles.headerMenuContainer}>
                     <Pressable onPress={() => setVisible(true)}>
                         <Icon iconFamily="MaterialIcons" name="language" size={RFValue(26)} />
@@ -85,8 +95,8 @@ const HeaderComponent = () => {
 
                     <Pressable
                         onPress={() => {
-                            // navigate('FileRTIScreen', { isLogin })
-                            // setIsMenu(false)
+                            setIsMenu(false)
+                            isAuthenticated ? navigate('FileRTIScreen') : navigate('LoginScreen')
                         }}
                     >
                         <CustomText
@@ -157,7 +167,7 @@ const HeaderComponent = () => {
                         </>
                     ) : (
                         <CustomButton
-                            label="Logout"
+                            label={isLoading ? <ActivityIndicator size={'small'} color={Colors.background} /> : 'Logout'}
                             width="90%"
                             borderColor={Colors.textBlue}
                             textColor={Colors.textBlue}
