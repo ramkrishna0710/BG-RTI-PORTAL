@@ -14,6 +14,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 
 type GenderType = 'Male' | 'Female' | 'Other' | null;
@@ -34,18 +35,12 @@ interface Props {
 
 const ApplicantInformation = ({ data, setData, goToNext }: Props) => {
 
-  // const [fullName, setFullName] = useState('');
-  // const [gender, setGender] = useState<GenderType>(null);
-  // const [mobileNumber, setMobileNumber] = useState('');
-  // const [emailAddress, setEmailAddress] = useState('');
-  // const [aadhaarNumber, setAadhaarNumber] = useState('');
-
   const [fullNameError, setFullNameError] = useState(false);
   const [genderError, setGenderError] = useState(false);
   const [mobileNumberError, setMobileNumberError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [aadhaarError, setAadhaarError] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false)
 
   const onHandleNext = async () => {
     let isValid = true;
@@ -97,12 +92,15 @@ const ApplicantInformation = ({ data, setData, goToNext }: Props) => {
     }
 
     try {
+      setIsLoading(true)
       const res = await getRTIStepOne(data.fullName, data.gender!.toLowerCase(), data.mobileNumber, data.emailAddress, data.aadhaarNumber);
       goToNext(res.data._id);
       showToast(res.message, 'success');
     } catch (err: any) {
       console.log(err.response?.data?.message);
       showToast(err.response?.data?.message, 'error');
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -212,7 +210,7 @@ const ApplicantInformation = ({ data, setData, goToNext }: Props) => {
         </TouchableOpacity>
 
         <CustomButton
-          label='Next'
+          label={isLoading ? <ActivityIndicator size={'small'} color={Colors.background} /> : "Next"}
           fontWeight={'bold'}
           fontSize={RV(13)}
           textColor={Colors.background}

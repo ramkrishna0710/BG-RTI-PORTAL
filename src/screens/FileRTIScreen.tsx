@@ -72,6 +72,12 @@ const FileRTIScreen = () => {
         bplCard: null,
     });
 
+    const [rtiData, setRtiData] = useState({
+        department: '',
+        subject: '',
+        description: '',
+        file: null,
+    });
 
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -119,7 +125,13 @@ const FileRTIScreen = () => {
                 </View>
             case 2:
                 return <View style={{ flex: 1 }}>
-                    <RtiRequest goToPrev={goToPrev} goToNext={goToNext} step1Id={rtiApplicationId ?? ''} />
+                    <RtiRequest
+                        goToPrev={goToPrev}
+                        goToNext={goToNext}
+                        step1Id={rtiApplicationId ?? ''}
+                        formData={rtiData}
+                        setFormData={setRtiData}
+                    />
                 </View>
             default:
                 return null;

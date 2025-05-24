@@ -8,6 +8,7 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { showToast } from '@utils/ToastUtils';
@@ -38,18 +39,6 @@ interface AddressInformationProps {
 type BplType = | 'Yes' | 'No' | null;
 
 const AddressInformation: React.FC<AddressInformationProps> = ({ addressData, setAddressData, goToNext, goToPrev, step1Id }) => {
-    // const [addressLineOne, setAddressLineOne] = useState('');
-    // const [addressLineTwo, setAddressLineTwo] = useState('');
-    // const [state, setState] = useState('Bihar');
-    // const [block, setBlock] = useState('');
-    // const [panchayat, setPanchayat] = useState('');
-    // const [village, setVillage] = useState('');
-    // const [pinCode, setPinCode] = useState('');
-    // const [bplCard, setBplCard] = useState<BplType>(null);
-    // const [open, setOpen] = useState(false);
-    // const [selectEducation, setSelectEducation] = useState('');
-    // const [otherEducation, setOtherEducation] = useState('');
-    // const [selectDistric, setSelectDistric] = useState('');
 
     const [openDistrict, setOpenDistrict] = useState(false);
     const [openEducation, setOpenEducation] = useState(false);
@@ -60,6 +49,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ addressData, se
     const [blockError, setBlockError] = useState(false);
     const [pinCodeError, setPinCodeError] = useState(false);
     const [educationError, setEducationError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
 
 
     const [educationOptions, setEducationOptions] = useState([
@@ -144,6 +134,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ addressData, se
         }
 
         try {
+            setIsLoading(true)
             const data = await getRTIStepTwo(step1Id, {
                 addressLine1: addressData.addressLineOne,
                 addressLine2: addressData.addressLineTwo,
@@ -162,6 +153,8 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ addressData, se
         } catch (err: any) {
             console.log(err.response?.data?.message);
             showToast(err.response?.data?.message, 'error');
+        } finally {
+            setIsLoading(false)
         }
 
     };
@@ -355,7 +348,7 @@ const AddressInformation: React.FC<AddressInformationProps> = ({ addressData, se
                 </TouchableOpacity> */}
 
                 <CustomButton
-                    label='Next'
+                    label={isLoading?<ActivityIndicator size={'small'} color={Colors.background}/>:"Next"}
                     fontWeight={'bold'}
                     fontSize={RV(13)}
                     textColor={Colors.background}

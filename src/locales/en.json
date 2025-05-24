@@ -3,5 +3,15 @@
   "login": "Login",
   "signup": "Sign Up",
   "welcome_to_bihar_government_rti_portal":"Welcome to Bihar Government RTI Portal",
-  "file_and_track_your_information":"File and track your Right to Information (RTI) applications online"
+  "file_and_track_your_information":"File and track your Right to Information (RTI) applications online",
+  "file_rti_application": "File RTI Application",
+  "track_application": "Track Application",
+  "how_it_works": "How It Works",
+  "register_and_login": "Register & Login",
+  "fill_rti_application_form": "Fill RTI Application Form",
+  "submit_and_pay_fee": "Submit & Pay Fee (if applicable)",
+  "track_application_status": "Track Application Status",
+  "portal_statistics": "Portal Statistics",
+  "ready_to_file_your_rti": "Ready to file your RTI application?",
+  "access_info_easily": "Access information from government departments with ease through our streamlined online RTI portal"
 }

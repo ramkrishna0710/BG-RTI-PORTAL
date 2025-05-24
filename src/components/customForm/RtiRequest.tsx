@@ -17,16 +17,28 @@ import { getRTIStepThree } from '@api/auth';
 import SuccessModal from '@components/modals/SuccessModal';
 import { resetAndNavigate } from '@utils/NavigationUtils';
 
-interface RTIRequestProps {
-    goToNext: (id?: string) => void;
+interface RtiRequestProps {
+    goToNext: () => void;
     goToPrev: () => void;
     step1Id: string | null;
+    formData: {
+        department: string;
+        subject: string;
+        description: string;
+        file: any;
+    };
+    setFormData: React.Dispatch<React.SetStateAction<{
+        department: string;
+        subject: string;
+        description: string;
+        file: any;
+    }>>;
 }
 
-const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
-    const [subject, setSubject] = useState('');
-    const [description, setDescription] = useState('');
-    const [selectDepartment, setSelectDepartment] = useState('');
+const RtiRequest: React.FC<RtiRequestProps> = ({ goToPrev, step1Id, formData, setFormData }) => {
+    const [subject, setSubject] = useState(formData.subject || '');
+    const [description, setDescription] = useState(formData.description || '');
+    const [selectDepartment, setSelectDepartment] = useState(formData.department || '');
     const [open, setOpen] = useState(false);
 
     const [departmetOpations, setDepartmetOptions] = useState([
@@ -80,7 +92,7 @@ const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
                 department: selectDepartment,
                 subject,
                 description,
-                file: selectedFile ??  null,
+                file: selectedFile ?? null,
             });
             setSuccessModal(true);
         } catch (err: any) {
@@ -89,40 +101,50 @@ const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
         }
     };
 
-    // const pickDocument = async () => {
-    //     try {
-    //         const result = await DocumentPicker.pick({
-    //             type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
-    //         });
+    const handlePrev = () => {
+        setFormData({
+            department: selectDepartment,
+            subject,
+            description,
+            file: selectedFile,
+        });
+        goToPrev();
+    };
 
-    //         if (result && result.length > 0) {
-    //             const file = result[0];
-    //             const fileName = file.name ?? 'Unnamed_File';
-    //             const fileType = file.type || 'application/octet-stream';
+    const pickDocument = async () => {
+        try {
+            const result = await DocumentPicker.pick({
+                type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
+            });
 
-    //             // Check file size (2MB max)
-    //             if (file.size && file.size > 2 * 1024 * 1024) {
-    //                 showToast('File size exceeds 2MB limit', 'error');
-    //                 return;
-    //             }
+            if (result && result.length > 0) {
+                const file = result[0];
+                const fileName = file.name ?? 'Unnamed_File';
+                const fileType = file.type || 'application/octet-stream';
 
-    //             setSelectedFile({
-    //                 uri: file.uri,
-    //                 name: fileName,
-    //                 type: fileType,
-    //             });
-    //             showToast('File selected successfully', 'success');
-    //         }
-    //     } catch (err: any) {
-    //         if (DocumentPicker.isCancel(err)) {
-    //             console.log('User cancelled document picker');
-    //             showToast('File selection cancelled', 'success');
-    //         } else {
-    //             console.error('Document picker error: ', err);
-    //             showToast('Failed to select file', 'error');
-    //         }
-    //     }
-    // };
+                // Check file size (2MB max)
+                if (file.size && file.size > 2 * 1024 * 1024) {
+                    showToast('File size exceeds 2MB limit', 'error');
+                    return;
+                }
+
+                setSelectedFile({
+                    uri: file.uri,
+                    name: fileName,
+                    type: fileType,
+                });
+                showToast('File selected successfully', 'success');
+            }
+        } catch (err: any) {
+            if (DocumentPicker.isCancel(err)) {
+                console.log('User cancelled document picker');
+                showToast('File selection cancelled', 'success');
+            } else {
+                console.error('Document picker error: ', err);
+                showToast('Failed to select file', 'error');
+            }
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -173,11 +195,11 @@ const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
             <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Upload Supporting Document</Text>
                 <View style={styles.uploadRow}>
-                    <TouchableOpacity style={styles.uploadBtn} onPress={() => { }}>
+                    <TouchableOpacity style={styles.uploadBtn} onPress={pickDocument}>
                         <Text style={styles.uploadText}>Choose File</Text>
                     </TouchableOpacity>
                     <CustomText fontFamily="Okra-Regular" fontSize={RV(12)} color={Colors.lightText}>
-                        No file chosen
+                        {selectedFile?.name ? selectedFile.name : 'No file chosen'}
                     </CustomText>
                 </View>
                 <CustomText
@@ -203,7 +225,7 @@ const RtiRequest: React.FC<RTIRequestProps> = ({ goToPrev, step1Id }) => {
                     iconFamily="MaterialIcons"
                     iconSize={RV(20)}
                     iconColor={Colors.textBlue}
-                    onPress={goToPrev}
+                    onPress={handlePrev}
                     borderColor={Colors.textBlue}
                 />
                 <CustomButton

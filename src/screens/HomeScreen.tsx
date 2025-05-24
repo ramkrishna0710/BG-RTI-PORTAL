@@ -45,7 +45,7 @@ const HomeScreen = () => {
           </CustomText>
 
           <CustomButton
-            label='File RTI Application'
+            label={t('file_rti_application')}
             width="60%"
             onPress={() => isAuthenticated ? navigate('FileRTIScreen') : navigate('LoginScreen')}
           />
@@ -53,7 +53,7 @@ const HomeScreen = () => {
           <CustomButton
             bgColor={Colors.transparent}
             borderColor={Colors.lightText}
-            label='Track Application'
+            label={t('track_application')}
             textColor={Colors.tertiary}
             width="60%"
             onPress={() => isAuthenticated ? navigate('DashboardScreen') : navigate('LoginScreen')}
@@ -66,7 +66,7 @@ const HomeScreen = () => {
             fontFamily='Okra-Bold'
             fontSize={RFValue(19)}
             style={{ marginTop: RV(30) }}>
-            How It Works
+            {t('how_it_works')}
           </CustomText>
 
           <View style={{ backgroundColor: Colors.background1, width: '20%', height: 3, marginTop: RV(6) }} />
@@ -76,28 +76,28 @@ const HomeScreen = () => {
           <CustomUpload
             iconFamily="MaterialIcons"
             iconName="person-add"
-            title="Register & Login"
+            title={t('register_and_login')}
             subtitle="Create an account and log in to the portal with your credentials."
           />
 
           <CustomUpload
             iconFamily="MaterialCommunityIcons"
             iconName="file-document-outline"
-            title="Fill RTI Application Form"
+            title={t('fill_rti_application_form')}
             subtitle="Complete the 3-step RTI application form with all relevant details."
           />
 
           <CustomUpload
             iconFamily="MaterialIcons"
             iconName="upload"
-            title="Submit & Pay Fee (if applicable)"
+            title={t('submit_and_pay_fee')}
             subtitle="Submit your application and pay the application fee if applicable."
           />
 
           <CustomUpload
             iconFamily="MaterialCommunityIcons"
             iconName="database"
-            title="Track Application Status"
+            title={t('track_application_status')}
             subtitle="Track the status of your application through your dashboard."
           />
 
@@ -109,7 +109,7 @@ const HomeScreen = () => {
               fontFamily='Okra-Bold'
               fontSize={RFValue(19)}
               style={{ marginTop: RV(30) }}>
-              Portal Statistics
+              {t('portal_statistics')}
             </CustomText>
             <View style={{ backgroundColor: Colors.background1, width: RV(70), height: 3, marginTop: 10 }} />
             <View style={{ margin: RV(9) }} />
@@ -124,14 +124,14 @@ const HomeScreen = () => {
               fontFamily='Okra-Bold'
               fontSize={RFValue(22)}
               style={{ marginTop: RV(30), textAlign: 'center' }}>
-              Ready to file your RTI application?
+              {t('ready_to_file_your_rti')}
             </CustomText>
             <CustomText
               fontFamily='Okra-Medium'
               fontSize={RFValue(14)}
               color={Colors.tertiary}
               style={{ marginTop: RV(10), textAlign: 'center' }}>
-              Access information from government departments with ease through our streamlined online RTI portal
+              {t('access_info_easily')}
             </CustomText>
 
             <CustomButton
