@@ -1,10 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import LottieView from 'lottie-react-native';
 import { Colors, screenHeight, screenWidth } from '@unistyles/Contstants';
 import CustomText from '@components/global/CustomText';
 import CustomStatusBar from '@components/statusbar/CustomStatubar';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 
 const Splash = () => {
     return (
@@ -16,9 +14,9 @@ const Splash = () => {
                 style={styles.logoImage}
             />
 
-            <Animated.View
+            <View
                 style={styles.animatedContainer}
-                entering={FadeInDown.delay(400).duration(800)}
+                // entering={FadeInDown.delay(400).duration(800)}
             >
                 <ActivityIndicator size={'large'} color={Colors.active} />
                 {/* <View style={styles.lottieWrapper}>
@@ -30,7 +28,7 @@ const Splash = () => {
                     />
 
                 </View> */}
-            </Animated.View>
+            </View>
         </View>
     );
 };
